@@ -1,8 +1,10 @@
 import SwiftUI
+import AVFoundation
 import UIKit
 
 struct StoriesView: View {
     @State private var selectedStory: BibleStory?
+    @State private var isPreparingStory = false
 
     var body: some View {
         ZStack {
@@ -31,17 +33,40 @@ struct StoriesView: View {
                             story: story,
                             palette: StoryCoverPalette.all[index % StoryCoverPalette.all.count]
                         ) {
-                            selectedStory = story
+                            openStory(story)
                         }
                     }
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 28)
             }
+
+            if isPreparingStory {
+                Color.black
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+            }
         }
+        .animation(.easeOut(duration: 0.16), value: isPreparingStory)
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(item: $selectedStory) { story in
             StoryReaderView(story: story)
+        }
+    }
+
+    private func openStory(_ story: BibleStory) {
+        guard selectedStory == nil else { return }
+
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            isPreparingStory = true
+            StoryReaderOrientationCoordinator.prepareForPresentation()
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
+                selectedStory = story
+                isPreparingStory = false
+            }
+        } else {
+            selectedStory = story
         }
     }
 }
@@ -117,27 +142,20 @@ private struct StoryReaderView: View {
     let story: BibleStory
     @Environment(\.dismiss) private var dismiss
     @State private var pageIndex: Int = 0
+    @State private var narrationPlayer = StoryNarrationPlayer()
 
     private var pages: [StoryPage] {
         if story.isDavidStory {
-            return [
+            return (1...8).map { pageNumber in
                 StoryPage(
                     title: story.title,
                     body: "",
                     icon: nil,
                     reference: story.referenceRange,
-                    imageName: "davidOne",
-                    isImageOnly: true
-                ),
-                StoryPage(
-                    title: story.title,
-                    body: "",
-                    icon: nil,
-                    reference: story.referenceRange,
-                    imageName: "davidTwo",
+                    imageName: "david\(pageNumber)",
                     isImageOnly: true
                 )
-            ]
+            }
         }
 
         var bookPages: [StoryPage] = [
@@ -203,7 +221,11 @@ private struct StoryReaderView: View {
         ZStack {
             StoryReaderBackdrop(story: story)
 
-            PageCurlReader(pages: pages, currentIndex: $pageIndex) { index, page in
+            PageCurlReader(
+                pages: pages,
+                currentIndex: $pageIndex,
+                onPageSettled: playNarration(for:)
+            ) { index, page in
                 StoryReaderPageView(
                     story: story,
                     page: page,
@@ -228,11 +250,30 @@ private struct StoryReaderView: View {
         .toolbar(.hidden, for: .navigationBar)
         .navigationBarBackButtonHidden(true)
         .modifier(StoryReaderLandscapeModifier())
+        .onAppear {
+            playNarration(for: pageIndex)
+        }
+        .onDisappear {
+            narrationPlayer.stop()
+        }
     }
 
     private func goToNextPage() {
         guard pageIndex < pages.count - 1 else { return }
         pageIndex += 1
+    }
+
+    private func playNarration(for index: Int) {
+        guard let resourceName = story.narrationResourceName(forPageIndex: index) else {
+            narrationPlayer.stop()
+            return
+        }
+
+        narrationPlayer.play(
+            resourceName: resourceName,
+            fileExtension: "mp3",
+            subdirectory: story.narrationSubdirectory
+        )
     }
 }
 
@@ -400,6 +441,9 @@ private struct StoryImagePageView: View {
 
     var body: some View {
         GeometryReader { proxy in
+            let imageWidthScale: CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 1.1 : 1.0
+            let imageHeightScale: CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 0.8 : 1.0
+
             Group {
                 if UIImage(named: imageName) != nil {
                     Image(imageName)
@@ -419,6 +463,7 @@ private struct StoryImagePageView: View {
                 }
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
+            .scaleEffect(x: imageWidthScale, y: imageHeightScale)
             .clipped()
             .overlay(
                 LinearGradient(
@@ -568,6 +613,7 @@ private struct StoryTextPageView: View {
 private struct PageCurlReader<PageContent: View>: UIViewControllerRepresentable {
     let pages: [StoryPage]
     @Binding var currentIndex: Int
+    let onPageSettled: ((Int) -> Void)?
     let pageView: (Int, StoryPage) -> PageContent
 
     func makeCoordinator() -> Coordinator {
@@ -611,7 +657,11 @@ private struct PageCurlReader<PageContent: View>: UIViewControllerRepresentable 
         }
 
         let direction: UIPageViewController.NavigationDirection = currentIndex > visibleIndex ? .forward : .reverse
-        controller.setViewControllers([targetController], direction: direction, animated: true)
+        let targetIndex = currentIndex
+        controller.setViewControllers([targetController], direction: direction, animated: true) { finished in
+            guard finished else { return }
+            context.coordinator.notifyPageSettled(targetIndex)
+        }
     }
 
     private func makeControllers() -> [UIViewController] {
@@ -659,8 +709,56 @@ private struct PageCurlReader<PageContent: View>: UIViewControllerRepresentable 
 
             DispatchQueue.main.async {
                 self.parent.currentIndex = index
+                self.parent.onPageSettled?(index)
             }
         }
+
+        func notifyPageSettled(_ index: Int) {
+            DispatchQueue.main.async {
+                self.parent.onPageSettled?(index)
+            }
+        }
+    }
+}
+
+private final class StoryNarrationPlayer {
+    private var player: AVAudioPlayer?
+    private var currentResourceID: String?
+
+    func play(resourceName: String, fileExtension: String, subdirectory: String? = nil) {
+        let resourceID = [subdirectory, resourceName, fileExtension].compactMap { $0 }.joined(separator: "/")
+        if currentResourceID == resourceID, player?.isPlaying == true {
+            return
+        }
+
+        let directURL = Bundle.main.url(forResource: resourceName, withExtension: fileExtension)
+        let subdirectoryURL = subdirectory.flatMap {
+            Bundle.main.url(forResource: resourceName, withExtension: fileExtension, subdirectory: $0)
+        }
+
+        guard let url = directURL ?? subdirectoryURL else {
+            stop()
+            return
+        }
+
+        do {
+            player?.stop()
+
+            let player = try AVAudioPlayer(contentsOf: url)
+            player.prepareToPlay()
+            player.play()
+
+            self.player = player
+            currentResourceID = resourceID
+        } catch {
+            stop()
+        }
+    }
+
+    func stop() {
+        player?.stop()
+        player = nil
+        currentResourceID = nil
     }
 }
 
@@ -669,31 +767,33 @@ private struct StoryReaderLandscapeModifier: ViewModifier {
         content
             .onAppear {
                 DispatchQueue.main.async {
-                    lockReaderOrientation()
+                    StoryReaderOrientationCoordinator.prepareForPresentation()
                 }
             }
             .onDisappear {
                 DispatchQueue.main.async {
-                    unlockReaderOrientation()
+                    StoryReaderOrientationCoordinator.restoreAfterDismiss()
                 }
             }
     }
+}
 
-    private func lockReaderOrientation() {
+private enum StoryReaderOrientationCoordinator {
+    static func prepareForPresentation() {
         if UIDevice.current.userInterfaceIdiom == .phone {
             AppDelegate.orientationLock = .landscape
             updateOrientation(.landscape)
         }
     }
 
-    private func unlockReaderOrientation() {
+    static func restoreAfterDismiss() {
         if UIDevice.current.userInterfaceIdiom == .phone {
             AppDelegate.orientationLock = .allButUpsideDown
             updateOrientation(.portrait)
         }
     }
 
-    private func updateOrientation(_ mask: UIInterfaceOrientationMask) {
+    private static func updateOrientation(_ mask: UIInterfaceOrientationMask) {
         guard let scene = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
             .first(where: { $0.activationState == .foregroundActive || $0.activationState == .foregroundInactive }) else {
@@ -984,6 +1084,15 @@ private struct StoryCoverPalette {
 private extension BibleStory {
     var isDavidStory: Bool {
         id == 5
+    }
+
+    var narrationSubdirectory: String? {
+        isDavidStory ? "Stories/Audio/David" : nil
+    }
+
+    func narrationResourceName(forPageIndex index: Int) -> String? {
+        guard isDavidStory, index >= 0 else { return nil }
+        return "david\(index + 1)"
     }
 
     var palette: StoryCoverPalette {

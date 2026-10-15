@@ -8,13 +8,13 @@ struct DavidAdventureView: View {
 
     // David’s 7 Quest stops
     private let nodes: [AdventureNode] = [
-        .init(title: "Shepherd’s Field", emoji: "🐑", y: 180,  xOffset: -60),
-        .init(title: "Roaring Beast",     emoji: "🦁", y: 520,  xOffset: 40),
-        .init(title: "Stream of Stones",  emoji: "🪨", y: 900,  xOffset: -80),
-        .init(title: "Camp of Israel",    emoji: "🏕️", y: 1250, xOffset: 70),
-        .init(title: "Valley of Elah",    emoji: "🛡️", y: 1600, xOffset: -60),
-        .init(title: "Face Goliath",      emoji: "📯", y: 1980, xOffset: 50),
-        .init(title: "Victory!",          emoji: "👑", y: 2380, xOffset: -30)
+        .init(title: "Shepherd’s Field", emoji: "🐑", y: 280,  xOffset: -60),
+        .init(title: "Roaring Beast",     emoji: "🦁", y: 640,  xOffset: 40),
+        .init(title: "Stream of Stones",  emoji: "🪨", y: 1040,  xOffset: -80),
+        .init(title: "Camp of Israel",    emoji: "🏕️", y: 1450, xOffset: 70),
+        .init(title: "Valley of Elah",    emoji: "🛡️", y: 1810, xOffset: -60),
+        .init(title: "Face Goliath",      emoji: "📯", y: 2180, xOffset: 50),
+        .init(title: "Victory!",          emoji: "👑", y: 2550, xOffset: -30)
     ]
 
     // 🔑 Map node titles → Firebase keys
@@ -130,44 +130,21 @@ struct DavidAdventureView: View {
                 ) { EmptyView() }.hidden()
 
                 // Background
-                LinearGradient(colors: [Color.bqBackgroundTop, Color.bqBackgroundBottom],
-                               startPoint: .top, endPoint: .bottom)
+                Color(hex: "#7A8950")
                     .ignoresSafeArea()
 
                 ScrollViewReader { proxy in
                     ScrollView(.vertical, showsIndicators: false) {
                         ZStack {
-                            MapBackdrop(mapHeight: mapHeight)
-
-                            AdventurePathShape(nodes: nodes)
-                                .stroke(
-                                    LinearGradient(
-                                        colors: [Color(hex:"#7CB7FF"),
-                                                 Color(hex:"#B36BFF"),
-                                                 Color(hex:"#6ED47A")],
-                                        startPoint: .top, endPoint: .bottom
-                                    ),
-                                    style: StrokeStyle(lineWidth: 14,
-                                                       lineCap: .round,
-                                                       lineJoin: .round)
-                                )
-                                .shadow(color: .black.opacity(0.1),
-                                        radius: 6, x: 0, y: 3)
-
-                            ForEach(Array(nodes.enumerated()), id: \.element.id) { (idx, node) in
-                                LocationPin(node: node) {
-                                    handleNodeTap(idx)
-                                }
-                                .position(
-                                    x: UIScreen.main.bounds.width / 2 + node.xOffset + 18,
-                                    y: node.y
-                                )
-                            }
-
-                            WalkingHero(heroKey: heroKey,
-                                        progress: progress,
-                                        nodes: nodes,
-                                        mapHeight: mapHeight)
+                            DavidQuestMap(
+                                nodes: nodes,
+                                mapHeight: mapHeight,
+                                progress: progress,
+                                heroKey: heroKey,
+                                completedIndices: Set(nodes.indices.filter { isNodeCompleted($0) }),
+                                currentIndex: currentNodeIndex,
+                                onSelect: handleNodeTap
+                            )
 
                             VStack(spacing: 0) {
                                 Spacer()
@@ -180,27 +157,27 @@ struct DavidAdventureView: View {
                                 Spacer(minLength: 0)
                             }
                             .frame(height: mapHeight)
+                            .allowsHitTesting(false)
                         }
                         .frame(height: mapHeight)
-                        .padding(.horizontal, 18)
-                        .padding(.vertical, 30)
-                        .padding(.bottom, 140)
+                        .padding(.bottom, 180)
                     }
                     .scrollDisabled(isWalking)
+                    .ignoresSafeArea(edges: .top)
                     .onAppear {
-                        let pos = positionAlongPath(progress: progress, nodes: nodes)
+                        let pos = positionAlongPath(progress: progress, nodes: nodes, width: 0)
                         currentAnchorY = pos.y
                         lastAutoScrollY = -1000
                         proxy.scrollTo("anchor", anchor: .center)
                     }
                     .onChange(of: progress) { _, newVal in
-                        let pos = positionAlongPath(progress: newVal, nodes: nodes)
+                        let pos = positionAlongPath(progress: newVal, nodes: nodes, width: 0)
                         currentAnchorY = pos.y
                         autoScrollIfNeeded(proxy: proxy, to: pos.y)
                     }
                     .onChange(of: hasLoadedAdventureState) { _, loaded in
                         guard loaded else { return }
-                        let pos = positionAlongPath(progress: progress, nodes: nodes)
+                        let pos = positionAlongPath(progress: progress, nodes: nodes, width: 0)
                         currentAnchorY = pos.y
                         lastAutoScrollY = -1000
                         DispatchQueue.main.async {
@@ -213,50 +190,72 @@ struct DavidAdventureView: View {
                     }
                 }
 
-                // Top UI
-                VStack(spacing: 10) {
-                    VStack(spacing: 6) {
-                        Text("David's Adventure")
-                            .font(.system(size: 28, weight: .heavy, design: .rounded))
-                            .foregroundStyle(Color.bqTitle)
-                            .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
-
-                        Text("Follow the quest and tap locations for story hints.")
-                            .font(.system(.subheadline, design: .rounded))
-                            .foregroundStyle(Color.bqSubtitle)
+            }
+            .overlay(alignment: .top) {
+                VStack(spacing: 5) {
+                    HStack(spacing: 7) {
+                        Image(systemName: "leaf.fill")
+                        Text("THE VALLEY OF ELAH")
+                            .tracking(2.2)
+                        Image(systemName: "leaf.fill")
+                            .scaleEffect(x: -1)
                     }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .fill(Color.bqCardSurface.opacity(0.72))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                    .stroke(Color.bqCardBorder.opacity(0.5), lineWidth: 1)
-                            )
-                    )
+                    .font(.system(size: 9, weight: .heavy, design: .rounded))
+                    .foregroundStyle(Color(hex: "#67734B"))
 
-                    Spacer()
+                    Text("David's Adventure")
+                        .font(.system(size: 27, weight: .heavy, design: .rounded))
+                        .foregroundStyle(Color(hex: "#263F2F"))
 
-                    HStack(spacing: 12) {
-                        Button { jump(to: 0.0) } label: {
-                            ControlPill(icon: "arrow.uturn.backward", title: "Restart")
-                        }
-                        Button { toggleWalk() } label: {
-                            ControlPill(icon: isWalking ? "pause.fill" : "play.fill",
-                                        title: isWalking ? "Pause" : "Walk")
-                        }
-                        Button { jumpToLatest() } label: {
-                            ControlPill(icon: "clock.fill", title: "Latest")
+                    Text("A shepherd’s courage. A giant adventure.")
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color(hex: "#6E7259"))
+
+                    HStack(spacing: 5) {
+                        ForEach(nodes.indices, id: \.self) { index in
+                            Capsule()
+                                .fill(Color(hex: isNodeCompleted(index) ? "#6C874C" : "#D7CCAC"))
+                                .frame(width: 22, height: 3)
                         }
                     }
-                    .padding(.bottom, 10)
+                    .padding(.top, 5)
+                    .accessibilityLabel("\(nodes.indices.filter { isNodeCompleted($0) }.count) of 7 stops completed")
                 }
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 14)
+                .background {
+                    RoundedRectangle(cornerRadius: 22, style: .continuous)
+                        .fill(Color(hex: "#FFF8E4").opacity(0.95))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                                .stroke(Color(hex: "#FFF3D0").opacity(0.85), lineWidth: 1)
+                        }
+                }
+                .shadow(color: Color(hex: "#1C3424").opacity(0.22), radius: 14, y: 6)
+
                 .padding(.top, 10)
+                .padding(.horizontal, 16)
+                .allowsHitTesting(false)
+            }
+            .overlay(alignment: .bottom) {
+                HStack(spacing: 12) {
+                    Button { jump(to: 0.0) } label: {
+                        DavidMapControl(icon: "arrow.uturn.backward", title: "Restart")
+                    }
+                    Button { toggleWalk() } label: {
+                        DavidMapControl(icon: isWalking ? "pause.fill" : "play.fill",
+                                    title: isWalking ? "Pause" : "Walk")
+                    }
+                    Button { jumpToLatest() } label: {
+                        DavidMapControl(icon: "clock.fill", title: "Latest")
+                    }
+                }
+                .padding(.bottom, 10)
                 .padding(.horizontal, 16)
             }
             .overlay(alignment: .bottom) {
-                PlayAdventurePill(
+                DavidMapPlayButton(
                     title: currentNodeIndex == nodes.count - 1
                         ? (isClaimingTrophy ? "Claiming..." : "Claim Trophy")
                         : "Play Adventure",
@@ -282,6 +281,8 @@ struct DavidAdventureView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .onAppear {
                 loadUserProfile()
                 loadCompletedGames()

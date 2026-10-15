@@ -106,6 +106,7 @@ struct WalkingHero: View {
     let progress: CGFloat
     let nodes: [AdventureNode]
     let mapHeight: CGFloat
+    var pathWidth: CGFloat? = nil
 
     private var frames: [Image] {
         (1...6).compactMap { idx in
@@ -118,7 +119,7 @@ struct WalkingHero: View {
     @State private var timer: AnyCancellable?
 
     var body: some View {
-        let pos = positionAlongPath(progress: progress, nodes: nodes)
+        let pos = positionAlongPath(progress: progress, nodes: nodes, width: pathWidth)
 
         Group {
             if !frames.isEmpty {
@@ -150,7 +151,7 @@ struct WalkingHero: View {
 
 // MARK: - Path interpolation
 
-func positionAlongPath(progress: CGFloat, nodes: [AdventureNode]) -> CGPoint {
+func positionAlongPath(progress: CGFloat, nodes: [AdventureNode], width: CGFloat? = nil) -> CGPoint {
     guard nodes.count > 1 else {
         return CGPoint(x: UIScreen.main.bounds.width/2, y: nodes.first?.y ?? 0)
     }
@@ -158,12 +159,29 @@ func positionAlongPath(progress: CGFloat, nodes: [AdventureNode]) -> CGPoint {
     let idx = Int(p)
     let frac = p - CGFloat(idx)
 
-    let width = UIScreen.main.bounds.width
+    let mapWidth = width ?? UIScreen.main.bounds.width
     let p1 = nodes[max(0, min(idx, nodes.count-1))]
     let p2 = nodes[max(0, min(idx+1, nodes.count-1))]
 
-    let x1 = width/2 + p1.xOffset + 18
-    let x2 = width/2 + p2.xOffset + 18
+    // David's map supplies its actual layout width. Keep the legacy layout for other maps.
+    if width != nil {
+        let start = CGPoint(x: mapWidth / 2 + p1.xOffset, y: p1.y)
+        let end = CGPoint(x: mapWidth / 2 + p2.xOffset, y: p2.y)
+        let midY = (start.y + end.y) / 2
+        let inverse = 1 - frac
+        return CGPoint(
+            x: inverse * inverse * inverse * start.x
+                + 3 * inverse * inverse * frac * start.x
+                + 3 * inverse * frac * frac * end.x
+                + frac * frac * frac * end.x,
+            y: inverse * inverse * inverse * start.y
+                + 3 * inverse * inverse * frac * midY
+                + 3 * inverse * frac * frac * midY
+                + frac * frac * frac * end.y
+        )
+    }
+    let x1 = mapWidth/2 + p1.xOffset + 18
+    let x2 = mapWidth/2 + p2.xOffset + 18
     let y = p1.y + (p2.y - p1.y) * frac
     let x = x1 + (x2 - x1) * frac
     return CGPoint(x: x, y: y)
