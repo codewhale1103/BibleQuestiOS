@@ -14,7 +14,7 @@ struct DavidAdventureView: View {
         .init(title: "Camp of Israel",    emoji: "🏕️", y: 1450, xOffset: 70),
         .init(title: "Valley of Elah",    emoji: "🛡️", y: 1810, xOffset: -60),
         .init(title: "Face Goliath",      emoji: "📯", y: 2180, xOffset: 50),
-        .init(title: "Victory!",          emoji: "👑", y: 2550, xOffset: -30)
+        .init(title: "Song of Courage",   emoji: "", y: 2550, xOffset: -30)
     ]
 
     // 🔑 Map node titles → Firebase keys
@@ -25,7 +25,7 @@ struct DavidAdventureView: View {
         "Camp of Israel": "CampOfIsrael",
         "Valley of Elah": "ValleyOfElah",
         "Face Goliath": "FaceGoliath",
-        "Victory!": "Victory"
+        "Song of Courage": "Victory"
     ]
 
     // Walking state
@@ -45,6 +45,7 @@ struct DavidAdventureView: View {
     @State private var goToArmorGame = false
     @State private var goToValleyOfElah = false
     @State private var goToFaceGoliath = false
+    @State private var goToVictoryGame = false
     @State private var goToHeroAlbum = false
     
     
@@ -56,6 +57,7 @@ struct DavidAdventureView: View {
     @State private var alertMessage = ""
     @State private var showTrophyUnlockPopup = false
     @State private var isClaimingTrophy = false
+    @State private var victorySongFinished = false
 
     private var currentNodeIndex: Int {
         let n = max(1, nodes.count - 1)
@@ -64,10 +66,6 @@ struct DavidAdventureView: View {
     }
 
     private func playAdventureTap() {
-        if currentNodeIndex == nodes.count - 1 {
-            claimDavidTrophy()
-            return
-        }
         if !openGame(at: currentNodeIndex) {
             toggleWalk()
         }
@@ -122,6 +120,14 @@ struct DavidAdventureView: View {
                         markGameCompleted("Face Goliath")
                     }),
                     isActive: $goToFaceGoliath
+                ) { EmptyView() }.hidden()
+
+                NavigationLink(
+                    destination: VictorySongGame(onComplete: {
+                        victorySongFinished = true
+                        if !completedGames.contains("Victory") { claimDavidTrophy() }
+                    }),
+                    isActive: $goToVictoryGame
                 ) { EmptyView() }.hidden()
 
                 NavigationLink(
@@ -257,9 +263,9 @@ struct DavidAdventureView: View {
             .overlay(alignment: .bottom) {
                 DavidMapPlayButton(
                     title: currentNodeIndex == nodes.count - 1
-                        ? (isClaimingTrophy ? "Claiming..." : "Claim Trophy")
+                        ? (isClaimingTrophy ? "Saving Victory..." : completedGames.contains("Victory") ? "Replay the Finale" : victorySongFinished ? "Claim Trophy" : "Play the Finale")
                         : "Play Adventure",
-                    icon: currentNodeIndex == nodes.count - 1 ? "trophy.fill" : "play.fill"
+                    icon: currentNodeIndex == nodes.count - 1 ? "music.note" : "play.fill"
                 ) {
                     playAdventureTap()
                 }
@@ -447,7 +453,7 @@ struct DavidAdventureView: View {
 
         let victoryIndex = nodes.count - 1
         if index == victoryIndex, index <= currentNodeIndex {
-            claimDavidTrophy()
+            openGame(at: index)
             return
         }
 
@@ -496,6 +502,18 @@ struct DavidAdventureView: View {
         case 5:
             DispatchQueue.main.async { goToFaceGoliath = true }
             return true
+        case 6:
+            if victorySongFinished && !completedGames.contains("Victory") {
+                claimDavidTrophy()
+                return true
+            }
+            if let missingTitle = firstMissingPrerequisite(before: index) {
+                alertMessage = "Please complete \"\(missingTitle)\" before playing the finale."
+                showAlert = true
+                return true
+            }
+            DispatchQueue.main.async { goToVictoryGame = true }
+            return true
         default:
             return false
         }
@@ -508,6 +526,7 @@ struct DavidAdventureView: View {
         goToArmorGame = false
         goToValleyOfElah = false
         goToFaceGoliath = false
+        goToVictoryGame = false
     }
 
     private func firstMissingPrerequisite(before index: Int) -> String? {

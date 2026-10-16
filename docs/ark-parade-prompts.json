@@ -1,0 +1,74 @@
+{
+  "generator": "Built-in image_gen tool",
+  "assets": [
+    {
+      "name": "ParadeElephant",
+      "path": "BibleQuest/Assets.xcassets/ParadeElephant.imageset/art.png",
+      "prompt": "Use case: stylized-concept. Asset type: premium children's iOS game character sprite, feature-animation quality 3D render. A single charming animal, full body with every foot and tail visible, three-quarter side view facing RIGHT, standing in a natural walking-ready pose on an invisible floor. Camera slightly above at 20 degrees. Expressive kind eyes, anatomically recognizable, appealing facial proportions, beautifully groomed fur/feathers with fine material detail, warm sunlight from upper left, subtle cool fill light. Clean distinct silhouette readable at small size. Subject centered filling 88% of image with a small clear margin. Actual transparent background, no scenery, no floor, no cast shadow, no props, no labels, no text, no border, no logos. Avoid plastic toy look, emojis, clothing, oversized human eyes, ugly or frightening faces. Subject: one adorable young Asian elephant, warm slate gray wrinkled skin, small ears, happy gently curved trunk raised at the tip, no tusks.",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-df338487-ce49-4902-8168-f65780f7cd3a.png"
+    },
+    {
+      "name": "ParadeMonkey",
+      "path": "BibleQuest/Assets.xcassets/ParadeMonkey.imageset/art.png",
+      "prompt": "Use case: stylized-concept. Asset type: premium children's iOS game character sprite, feature-animation quality 3D render. A single charming animal, full body with every foot and tail visible, three-quarter side view facing RIGHT, standing in a natural walking-ready pose on an invisible floor. Camera slightly above at 20 degrees. Expressive kind eyes, anatomically recognizable, appealing facial proportions, beautifully groomed fur/feathers with fine material detail, warm sunlight from upper left, subtle cool fill light. Clean distinct silhouette readable at small size. Subject centered filling 88% of image with a small clear margin. Actual transparent background, no scenery, no floor, no cast shadow, no props, no labels, no text, no border, no logos. Avoid plastic toy look, emojis, clothing, oversized human eyes, ugly or frightening faces. Subject: one cheerful small macaque monkey, golden brown fur, warm peach face and ears, short realistic muzzle, long curved tail, walking on all fours, playful intelligent expression. Clearly a macaque monkey, not a chimpanzee or ape.",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-49bc3cde-418f-4179-9b2f-02f9e6691f2d.png"
+    },
+    {
+      "name": "ParadeSheep",
+      "path": "BibleQuest/Assets.xcassets/ParadeSheep.imageset/art.png",
+      "prompt": "Use case: stylized-concept. Asset type: premium children's iOS game character sprite, feature-animation quality 3D render. A single charming animal, full body with every foot and tail visible, three-quarter side view facing RIGHT, standing in a natural walking-ready pose on an invisible floor. Camera slightly above at 20 degrees. Expressive kind eyes, anatomically recognizable, appealing facial proportions, beautifully groomed fur/feathers with fine material detail, warm sunlight from upper left, subtle cool fill light. Clean distinct silhouette readable at small size. Subject centered filling 88% of image with a small clear margin. Actual transparent background, no scenery, no floor, no cast shadow, no props, no labels, no text, no border, no logos. Avoid plastic toy look, emojis, clothing, oversized human eyes, ugly or frightening faces. Subject: one beautiful fluffy ivory sheep, dense soft curls, warm beige face and little ears, four dark cloven hooves, gentle lively eyes, no horns.",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-4e86526a-b5d5-47c1-8a96-8ea9c2394aad.png"
+    },
+    {
+      "name": "ParadeDuck",
+      "path": "BibleQuest/Assets.xcassets/ParadeDuck.imageset/art.png",
+      "prompt": "Use case: stylized-concept. Asset type: premium children's iOS game character sprite, feature-animation quality 3D render. A single charming animal, full body with every foot and tail visible, three-quarter side view facing RIGHT, standing in a natural walking-ready pose on an invisible floor. Camera slightly above at 20 degrees. Expressive kind eyes, anatomically recognizable, appealing facial proportions, beautifully groomed fur/feathers with fine material detail, warm sunlight from upper left, subtle cool fill light. Clean distinct silhouette readable at small size. Subject centered filling 88% of image with a small clear margin. Actual transparent background, no scenery, no floor, no cast shadow, no props, no labels, no text, no border, no logos. Avoid plastic toy look, emojis, clothing, oversized human eyes, ugly or frightening faces. Subject: one delightful mallard duck, iridescent green head, golden yellow beak, chestnut breast, gray brown folded wings with cobalt blue patch, orange webbed feet, friendly natural bird eyes.",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-9ccdec6d-377a-488f-866b-9aac075bf0db.png"
+    },
+    {
+      "name": "ParadeHorse",
+      "path": "BibleQuest/Assets.xcassets/ParadeHorse.imageset/art.png",
+      "prompt": "Use case: stylized-concept. Asset type: premium children's iOS game character sprite, feature-animation quality 3D render. A single charming animal, full body with every foot and tail visible, three-quarter side view facing RIGHT, standing in a natural walking-ready pose on an invisible floor. Camera slightly above at 20 degrees. Expressive kind eyes, anatomically recognizable, appealing facial proportions, beautifully groomed fur/feathers with fine material detail, warm sunlight from upper left, subtle cool fill light. Clean distinct silhouette readable at small size. Subject centered filling 88% of image with a small clear margin. Actual transparent background, no scenery, no floor, no cast shadow, no props, no labels, no text, no border, no logos. Avoid plastic toy look, emojis, clothing, oversized human eyes, ugly or frightening faces. Subject: one lovely chestnut horse, flowing dark brown mane and tail, small cream blaze on forehead, powerful but gentle, elegant natural anatomy, all four hooves on ground, no tack or saddle.",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-0e885886-beea-4cae-baa2-2b9e0ba61cc3.png"
+    },
+    {
+      "name": "ParadeClearing",
+      "path": "BibleQuest/Assets.xcassets/ParadeClearing.imageset/art.png",
+      "prompt": "Use case: stylized-concept. Asset type: portrait 1024x1536 background for a premium children's adventure game, feature-animation 3D environment, no UI. Beautiful sunlit ancient woodland clearing before Noah's flood. Elevated three-quarter camera looking down into a generous OPEN flat grassy and sandy clearing with soft moss, tiny wildflowers at the margins. Lush olive and cedar trees frame left and right edges, sunbeams through canopy, layered misty hills in distance. Small sparkling turquoise pond ONLY in lower left edge. Ferns and long grass around perimeter, tiny soft rocks at edges. Warm luminous honey gold and emerald palette, exceptional cinematic detail, painterly yet convincingly dimensional. Middle 70% of frame is uncluttered walkable ground for children to draw trails, right UPPER half has spacious flat bare sandy clearing for a large ark overlay. No animals, no people, no ark, no buildings, no text, no UI, no large obstacles in center, no dark vignette. Entire scene in focus, inviting magical discovery atmosphere.",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-eb434790-0961-4c1c-bd2f-7356134c2660.png"
+    },
+    {
+      "name": "ParadeArk",
+      "path": "BibleQuest/Assets.xcassets/ParadeArk.imageset/art.png",
+      "prompt": "Use case: stylized-concept. Asset type: transparent cutout environment prop for premium children's game, feature-animation quality detailed 3D render. A magnificent ancient Noah's ark resting on dry ground, beautiful honey-colored timber ship with a curved broad hull, two levels of cozy timber cabin, roof, six small dark open windows on visible long front side. Three-quarter elevated view, bow toward RIGHT, broad long side facing viewer. LARGE open dark doorway near the bottom CENTER of the broad side with a wide wooden boarding ramp projecting down toward viewer and slightly left. A little greenery at ramp feet only. Entire ark and ramp visible with generous transparent margin. Rich carved beams, rope lashings, individually textured wood planks, lanterns at door, no sails. Warm golden sunshine from upper left, detailed premium polished render, joyful storybook realism, usable isolated game prop. Actual transparent background, no scenery, no sky, no floor or cast shadow outside object, no humans, no animals, no text, no UI, no logos.",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-d34dabac-7a6d-449d-8255-6d578c9da3b6.png"
+    },
+    {
+      "name": "ParadeCow",
+      "path": "BibleQuest/Assets.xcassets/ParadeCow.imageset/art.png",
+      "prompt": "Use case: stylized-concept. Game asset: one charming brown-and-white cow for Noah's animal gathering game. Polished storybook 3D illustration, full animal visible in three-quarter side view facing right, standing on an invisible floor. Natural friendly face, warm brown eyes, soft muzzle, little ears, short horns, four legs and long tail visible. Fine fur detail, warm sunshine from upper left. Clean silhouette readable at small size. Centered, filling most of the canvas. Transparent background. No text, no props, no scenery.",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-89a4e32a-7e95-43a0-9c42-134783feab54.png"
+    },
+    {
+      "name": "ParadeWolf",
+      "path": "BibleQuest/Assets.xcassets/ParadeWolf.imageset/art.png",
+      "prompt": "Use case: stylized-concept. Asset type: transparent animal sprite for Noah's Ark Parade. A beautifully rendered friendly storybook 3D animal, standing, full body and all four feet and tail visible, three-quarter view facing right. Fine natural fur texture, warm sunlight from upper left, soft cool fill. Natural appealing face and kind eyes. Centered with clear margin and a readable silhouette. Transparent background. No text, no environment, no props. Subject: beautiful gray wolf with silvery gray and ivory coat, pointed ears, long bushy tail, friendly alert expression. Clearly recognizable as a wolf."
+    },
+    {
+      "name": "ParadeTiger",
+      "path": "BibleQuest/Assets.xcassets/ParadeTiger.imageset/art.png",
+      "prompt": "Use case: stylized-concept. Asset type: transparent animal sprite for Noah's Ark Parade. A beautifully rendered friendly storybook 3D animal, standing, full body and all four feet and tail visible, three-quarter view facing right. Fine natural fur texture, warm sunlight from upper left, soft cool fill. Natural appealing face and kind eyes. Centered with clear margin and a readable silhouette. Transparent background. No text, no environment, no props. Subject: magnificent orange tiger with crisp black stripes and ivory cheeks, fine whiskers, soft rounded ears, calm friendly expression."
+    }
+  ],
+  "licensedAssets": [
+    {
+      "name": "ParadeLion",
+      "path": "BibleQuest/Assets.xcassets/ParadeLion.imageset/art.png",
+      "creator": "cameronschmidt / Pixabay",
+      "source": "https://pixabay.com/illustrations/ai-generated-lion-transparent-animal-9287227/",
+      "license": "Pixabay Content License",
+      "licenseURL": "https://pixabay.com/service/license-summary/",
+      "changes": "Unmodified transparent PNG"
+    }
+  ]
+}

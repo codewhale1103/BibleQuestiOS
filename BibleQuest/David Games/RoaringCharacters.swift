@@ -310,6 +310,23 @@ final class RoaringDavidRig {
         BeastArt.mesh(parent, vertices: vertices, indices: indices, material: material)
     }
 
+    /// A measured heel-to-toe walk, outstretched arms and counter-lean for the valley crossing.
+    func balance(time: Double, walking: Bool, lean: Double, wind: Double, calm: Bool, reduced: Bool) {
+        let stride = walking && !reduced ? sin(time * 7.5) : 0
+        body.position.y = Float(walking && !reduced ? abs(stride) * 0.025 : 0)
+        body.eulerAngles = SCNVector3(0,0,Float(-lean * 0.27))
+        head.eulerAngles = SCNVector3(0,Float(sin(time * 0.7) * (reduced ? 0 : 0.045)),Float(lean * 0.12))
+        for index in 0..<2 {
+            let side: Double = index == 0 ? -1 : 1
+            arms[index].eulerAngles = SCNVector3(-0.12,0,side * (calm ? 0.8 : 1.13) + lean * 0.15)
+            legs[index].eulerAngles.x = Float(stride * side * 0.32)
+            knees[index].eulerAngles.x = Float(max(0,-stride * side) * 0.4)
+            tassels[index].eulerAngles.z = Float(reduced ? 0 : wind * 0.18 + sin(time * 5 + side) * 0.05)
+        }
+        cloak.eulerAngles.x = Float(reduced ? -0.06 : -0.15 + sin(time * 5) * 0.06)
+        cloak.eulerAngles.z = Float(reduced ? 0 : wind * 0.25 + sin(time * 3.5) * 0.04)
+    }
+
     func animate(time: Double, jump: Double, running: Bool, lean: Double) {
         let stride = running ? sin(time * 15) : sin(time * 2) * 0.06
         body.position.y = Float(running ? abs(sin(time * 15)) * 0.045 : sin(time * 2) * 0.012)

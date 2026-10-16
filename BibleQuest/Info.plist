@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSMotionUsageDescription</key>
+	<string>Use device tilt to help David balance in Steady Faith. You can also play with touch controls.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

@@ -1,0 +1,140 @@
+{
+  "provider": "ElevenLabs",
+  "clips": [
+    {
+      "id": "listen",
+      "text": "Listen carefully. Our friend is looking for a partner. Can you find the animal that looks and sounds the same?",
+      "file": "parade-voice-listen.m4a",
+      "durationSeconds": 7.605
+    },
+    {
+      "id": "trace",
+      "text": "Two together! Draw a trail from your animal friends to the glowing ramp. Let's help them into the ark!",
+      "file": "parade-voice-trace.m4a",
+      "durationSeconds": 7.269
+    },
+    {
+      "id": "hint",
+      "text": "Look closely at our friend, then listen to its call. Find the animal with the same shape and sound.",
+      "file": "parade-voice-hint.m4a",
+      "durationSeconds": 6.833
+    },
+    {
+      "id": "trail-hint",
+      "text": "Start at either animal and draw all the way to the glowing ramp. You can try any trail you like!",
+      "file": "parade-voice-trail-hint.m4a",
+      "durationSeconds": 6.345
+    },
+    {
+      "id": "finale",
+      "text": "Sixteen animals! Eight pairs, all safely aboard. Noah listened to God, and you helped him care for every animal. Great work!",
+      "file": "parade-voice-finale.m4a",
+      "durationSeconds": 9.346
+    },
+    {
+      "id": "fact-lion",
+      "text": "Lions greet one another by rubbing their heads. A lion's roar helps other lions find it.",
+      "file": "parade-voice-fact-lion.m4a",
+      "durationSeconds": 5.046
+    },
+    {
+      "id": "fact-wolf",
+      "text": "Wolves live in family groups called packs. They howl to stay in touch. Can you make a gentle howl?",
+      "file": "parade-voice-fact-wolf.m4a",
+      "durationSeconds": 5.787
+    },
+    {
+      "id": "fact-tiger",
+      "text": "A tiger's stripes help it hide in tall grass. Look closely at the beautiful pattern on its coat.",
+      "file": "parade-voice-fact-tiger.m4a",
+      "durationSeconds": 5.803
+    },
+    {
+      "id": "fact-monkey",
+      "text": "Monkeys use calls to talk to their group. This recording is a macaque monkey. Can you answer its call?",
+      "file": "parade-voice-fact-monkey.m4a",
+      "durationSeconds": 6.148
+    },
+    {
+      "id": "fact-elephant",
+      "text": "An elephant uses its trunk to smell, drink, and pick things up. Can you curl your arm like a trunk?",
+      "file": "parade-voice-fact-elephant.m4a",
+      "durationSeconds": 6.355
+    },
+    {
+      "id": "fact-sheep",
+      "text": "Sheep recognize familiar voices. A little lamb can find its mother by listening to her bleat.",
+      "file": "parade-voice-fact-sheep.m4a",
+      "durationSeconds": 5.367
+    },
+    {
+      "id": "fact-cow",
+      "text": "Cows use moos to call to one another. A calf learns to recognize its mother's voice.",
+      "file": "parade-voice-fact-cow.m4a",
+      "durationSeconds": 4.369
+    },
+    {
+      "id": "fact-horse",
+      "text": "Horses move their ears toward sounds. Their hooves make a clip-clop rhythm as they walk.",
+      "file": "parade-voice-fact-horse.m4a",
+      "durationSeconds": 3.954
+    },
+    {
+      "id": "count-2",
+      "text": "Two animals. One pair!",
+      "file": "parade-voice-count-2.m4a",
+      "durationSeconds": 1.703
+    },
+    {
+      "id": "count-4",
+      "text": "Four animals. Two pairs!",
+      "file": "parade-voice-count-4.m4a",
+      "durationSeconds": 1.686
+    },
+    {
+      "id": "count-6",
+      "text": "Six animals. Three pairs!",
+      "file": "parade-voice-count-6.m4a",
+      "durationSeconds": 1.871
+    },
+    {
+      "id": "count-8",
+      "text": "Eight animals. Four pairs!",
+      "file": "parade-voice-count-8.m4a",
+      "durationSeconds": 1.95
+    },
+    {
+      "id": "count-10",
+      "text": "Ten animals. Five pairs!",
+      "file": "parade-voice-count-10.m4a",
+      "durationSeconds": 2.052
+    },
+    {
+      "id": "count-12",
+      "text": "Twelve animals. Six pairs!",
+      "file": "parade-voice-count-12.m4a",
+      "durationSeconds": 2.115
+    },
+    {
+      "id": "count-14",
+      "text": "Fourteen animals. Seven pairs!",
+      "file": "parade-voice-count-14.m4a",
+      "durationSeconds": 2.391
+    },
+    {
+      "id": "count-16",
+      "text": "Sixteen animals. Eight pairs!",
+      "file": "parade-voice-count-16.m4a",
+      "durationSeconds": 2.652
+    }
+  ],
+  "voice": "Anna - Children's Book Narrator",
+  "model": "Eleven Multilingual v2",
+  "generated": "2026-10-16",
+  "speed": 1,
+  "stability": 0.5,
+  "similarity": 0.75,
+  "speakerBoost": true,
+  "licenseStatus": "Preview only: generated on ElevenLabs Free plan. Regenerate on a commercially licensed paid plan before commercial release.",
+  "licenseSource": "https://help.elevenlabs.io/hc/en-us/articles/13313564601361-Can-I-publish-the-content-I-generate-on-the-platform"
+}

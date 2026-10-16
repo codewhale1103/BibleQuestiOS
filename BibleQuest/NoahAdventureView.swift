@@ -4,271 +4,264 @@ import FirebaseAuth
 import FirebaseDatabase
 
 struct NoahAdventureView: View {
-    private let mapHeight: CGFloat = 2800
-
-    // Noah’s 7 Quest stops
-    private let nodes: [AdventureNode] = [
-        .init(title: "God’s Call",        emoji: "🌟", y: 180,  xOffset: -60),
-        .init(title: "Build the Ark",     emoji: "🪚", y: 520,  xOffset: 40),
-        .init(title: "Gather Animals",    emoji: "🐘", y: 900,  xOffset: -80),
-        .init(title: "Flood Begins",      emoji: "🌊", y: 1250, xOffset: 70),
-        .init(title: "40 Days & Nights",  emoji: "☔️", y: 1600, xOffset: -60),
-        .init(title: "The Dove Returns",  emoji: "🕊️", y: 1980, xOffset: 50),
-        .init(title: "Rainbow Promise",   emoji: "🌈", y: 2380, xOffset: -30)
-    ]
-
-    // State
-    @State private var isWalking = false
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var progress: CGFloat = 0
-    @State private var walkCancellable: AnyCancellable?
-    @State private var currentAnchorY: CGFloat = 0
-    @State private var lastAutoScrollY: CGFloat = -1000
-
-    @State private var userName: String = "Explorer"
-    @State private var heroKey: String = "noah"
-    @State private var goToFirstGame = false
-
-    // Current stop
-    private var currentNodeIndex: Int {
-        let n = max(1, nodes.count - 1)
-        let raw = (progress.clamped(to: 0...1) * CGFloat(n)).rounded()
-        return Int(raw).clamped(to: 0...n)
-    }
-
-    // What happens when “Play Adventure” is tapped
-    private func playAdventureTap() {
-        if currentNodeIndex == 0 {
-            goToFirstGame = true
-        } else {
-            toggleWalk()
-        }
-    }
+    @State private var furthest: CGFloat = 0
+    @State private var isSailing = false
+    @State private var isReverse = false
+    @State private var destination = 0
+    @State private var voyageTimer: AnyCancellable?
+    @State private var anchorY: CGFloat = 240
+    @State private var lastScrollY: CGFloat = -1000
+    @State private var scrollY: CGFloat = 0
+    @State private var loaded = false
+    @State private var selectedChapter: NoahVoyageChapter?
+    @State private var showRainbowGame = false
+    @State private var rainbowFinished = false
+    @State private var saveAlert = false
+    @State private var savingRainbow = false
+    @State private var showBuildGame = false
+    @State private var buildFinished = false
+    @State private var savingBuild = false
+    @State private var buildSaveAlert = false
+    @State private var showAnimalsGame = false
+    @State private var animalsFinished = false
+    @State private var savingAnimals = false
+    @State private var animalsSaveAlert = false
+    private var currentIndex: Int { NoahVoyageRoute(width: 390).index(at: progress) }
+    private var storageKey: String { "NoahVoyageMap.\(Auth.auth().currentUser?.uid ?? "guest")" }
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                // Hidden nav to first Noah game
-                NavigationLink(
-                    destination: Text("Noah Game 1 – God’s Call"), // Replace with actual game view
-                    isActive: $goToFirstGame
-                ) { EmptyView() }
-                .hidden()
-
-                // Background
-                LinearGradient(colors: [Color.bqBackgroundTop, Color.bqBackgroundBottom],
-                               startPoint: .top, endPoint: .bottom)
-                    .ignoresSafeArea()
-
-                ScrollViewReader { proxy in
-                    ScrollView(.vertical, showsIndicators: false) {
-                        ZStack {
-                            MapBackdrop(mapHeight: mapHeight)
-
-                            AdventurePathShape(nodes: nodes)
-                                .stroke(
-                                    LinearGradient(
-                                        colors: [Color(hex:"#00BCD4"),
-                                                 Color(hex:"#4CAF50"),
-                                                 Color(hex:"#8BC34A")],
-                                        startPoint: .top, endPoint: .bottom
-                                    ),
-                                    style: StrokeStyle(lineWidth: 14, lineCap: .round, lineJoin: .round)
-                                )
-                                .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
-
-                            ForEach(Array(nodes.enumerated()), id: \.element.id) { (idx, node) in
-                                LocationPin(node: node) {
-                                    walkToNode(idx)
-                                }
-                                .position(
-                                    x: UIScreen.main.bounds.width / 2 + node.xOffset + 18,
-                                    y: node.y
-                                )
+            GeometryReader { geo in
+                let wide = geo.size.width > geo.size.height*1.3
+                let viewStart = max(0,-scrollY)
+                let visibleStart = min(NoahVoyageRoute.height,max(0,viewStart-160))
+                let visibleEnd = max(visibleStart,min(NoahVoyageRoute.height,viewStart+geo.size.height+260))
+                let visible = visibleStart...visibleEnd
+                ZStack {
+                    Color(hex: "#0C4E62").ignoresSafeArea()
+                    ScrollViewReader { proxy in
+                        ScrollView(.vertical,showsIndicators: false) {
+                            ZStack(alignment: .top) {
+                                NoahQuestMap(progress: progress,furthest: furthest,sailing: isSailing,reverse: isReverse,compact: wide,visible: visible,active: scenePhase == .active && selectedChapter == nil && !showRainbowGame && !showBuildGame && !showAnimalsGame,onSelect: selectStop)
+                                VStack(spacing: 0) {
+                                    Spacer().frame(height: anchorY.clamped(to: 0...(NoahVoyageRoute.height-1)))
+                                    Color.clear.frame(height: 1).id("ark-anchor")
+                                    Spacer(minLength: 0)
+                                }.frame(height: NoahVoyageRoute.height).allowsHitTesting(false)
                             }
 
-                            WalkingHero(heroKey: heroKey,
-                                        progress: progress,
-                                        nodes: nodes,
-                                        mapHeight: mapHeight)
-                                .onChange(of: progress) { _, newVal in
-                                    let pos = positionAlongPath(progress: newVal, nodes: nodes)
-                                    currentAnchorY = pos.y
-                                    autoScrollIfNeeded(proxy: proxy, to: pos.y)
-                                }
-
-                            GeometryReader { _ in
-                                Color.clear
-                                    .frame(height: 1)
-                                    .id("anchor")
-                                    .offset(y: currentAnchorY)
-                            }
                         }
-                        .frame(height: mapHeight)
-                        .padding(.horizontal, 18)
-                        .padding(.vertical, 30)
-                        .padding(.bottom, 140)
-                    }
-                    .onAppear {
-                        currentAnchorY = nodes.first?.y ?? 0
-                        lastAutoScrollY = currentAnchorY
-                        proxy.scrollTo("anchor", anchor: .top)
+                        .scrollDisabled(isSailing).ignoresSafeArea()
+                        .onScrollGeometryChange(for: CGFloat.self) { geometry in geometry.contentOffset.y } action: { _,value in scrollY = -value }
+                        .onAppear {
+                            loadPosition()
+                            moveAnchor(width: geo.size.width)
+                            DispatchQueue.main.async { proxy.scrollTo("ark-anchor",anchor: .center) }
+                        }
+                        .onChange(of: progress) { _,_ in
+                            moveAnchor(width: geo.size.width)
+                            let y = anchorY
+                            guard abs(y-lastScrollY) > (isSailing ? 0 : 12) else { return }
+                            lastScrollY = y
+                            var transaction = Transaction(); transaction.animation = !isSailing && !reduceMotion ? .easeOut(duration: 0.4) : nil
+                            withTransaction(transaction) { proxy.scrollTo("ark-anchor",anchor: .center) }
+                        }
+                        .onChange(of: geo.size.width) { _,_ in
+                            stopSailing(); moveAnchor(width: geo.size.width)
+                            proxy.scrollTo("ark-anchor",anchor: .center)
+                        }
                     }
                 }
-
-                // Top UI
-                VStack(spacing: 10) {
-                    VStack(spacing: 6) {
-                        Text("\(userName)’s Adventure")
-                            .font(.system(size: 28, weight: .heavy, design: .rounded))
-                            .foregroundStyle(Color.bqTitle)
-                            .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
-
-                        Text("Follow the quest and tap locations for story hints.")
-                            .font(.system(.subheadline, design: .rounded))
-                            .foregroundStyle(Color.bqSubtitle)
-                    }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .fill(Color.bqCardSurface.opacity(0.72))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                    .stroke(Color.bqCardBorder.opacity(0.5), lineWidth: 1)
-                            )
-                    )
-
-                    Spacer()
-
-                    HStack(spacing: 12) {
-                        Button { jump(to: 0.0) } label: {
-                            ControlPill(icon: "arrow.uturn.backward", title: "Start")
-                        }
-                        Button { toggleWalk() } label: {
-                            ControlPill(icon: isWalking ? "pause.fill" : "play.fill",
-                                        title: isWalking ? "Pause" : "Walk")
-                        }
-                        Button { jump(to: 1.0) } label: {
-                            ControlPill(icon: "clock.fill", title: "Latest")
-                        }
-                    }
-                    .padding(.bottom, 10)
+                .overlay(alignment: .top) {
+                    NoahVoyageHeader(chapter: currentIndex,compact: wide,onBack: { stopSailing(); dismiss() }).frame(maxWidth: wide ? 310 : 530).frame(maxWidth: .infinity,alignment: wide ? .leading : .center).padding(.horizontal,16).padding(.top,8)
                 }
-                .padding(.top, 10)
-                .padding(.horizontal, 16)
+                .overlay(alignment: .bottom) {
+                    NoahVoyageDock(chapter: NoahVoyageChapter(rawValue: isSailing ? destination : currentIndex) ?? .call,sailing: isSailing,atEnd: progress >= 0.999,compact: wide,rainbowFinished: rainbowFinished,buildFinished: buildFinished,animalsFinished: animalsFinished,
+                        onStart: { jump(to: 0) },onSail: toggleSailing,onLatest: { jump(to: furthest) },onDiscover: discover)
+                        .frame(maxWidth: wide ? 330 : 480).frame(maxWidth: .infinity,alignment: wide ? .trailing : .center).padding(.horizontal,16).padding(.bottom,8)
+                }
             }
-            .overlay(alignment: .bottom) {
-                PlayAdventurePill { playAdventureTap() }
-                    .padding(.horizontal, 18)
-                    .padding(.bottom, 90)
+            .toolbar(.hidden,for: .navigationBar,.tabBar).preferredColorScheme(.dark)
+            .sheet(item: $selectedChapter) { chapter in NoahVoyageChapterSheet(chapter: chapter) }
+            .fullScreenCover(isPresented: $showAnimalsGame) {
+                ArkParadeGame(onComplete: {
+                    animalsFinished = true
+                    UserDefaults.standard.set(true,forKey: storageKey+".animalsComplete")
+                    UserDefaults.standard.set(true,forKey: storageKey+".animalsPending")
+                    saveAnimalsCompletion()
+                },onExit: { showAnimalsGame = false })
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .onAppear(perform: loadUserProfile)
+            .fullScreenCover(isPresented: $showBuildGame) {
+                ArkWorkshopGame(onComplete: {
+                    buildFinished = true
+                    UserDefaults.standard.set(true,forKey: storageKey+".buildComplete")
+                    UserDefaults.standard.set(true,forKey: storageKey+".buildPending")
+                    saveBuildCompletion()
+                },onExit: { showBuildGame = false })
+            }
+            .fullScreenCover(isPresented: $showRainbowGame) {
+                RainbowPromiseGame(onComplete: {
+                    rainbowFinished = true
+                    UserDefaults.standard.set(true,forKey: storageKey+".rainbowComplete")
+                    UserDefaults.standard.set(true,forKey: storageKey+".rainbowPending")
+                    saveRainbowCompletion()
+                },onExit: { showRainbowGame = false })
+            }
+            .onAppear(perform: loadRainbowCompletion)
+            .onAppear(perform: loadBuildCompletion)
+            .onAppear(perform: loadAnimalsCompletion)
+            .alert("Every pair is safely aboard",isPresented: $animalsSaveAlert) {
+                Button("Try saving again",action: saveAnimalsCompletion)
+                Button("Later",role: .cancel) {}
+            } message: { Text("Gather Animals is complete on this device. Your online progress could not be saved yet. You can retry without replaying.") }
+            .alert("Your ark is complete",isPresented: $buildSaveAlert) {
+                Button("Try saving again",action: saveBuildCompletion)
+                Button("Later",role: .cancel) {}
+            } message: { Text("Build the Ark is complete on this device. Your online progress could not be saved yet. You can retry without replaying.") }
+            .alert("Your rainbow is complete",isPresented: $saveAlert) {
+                Button("Try saving again",action: saveRainbowCompletion)
+                Button("Later",role: .cancel) {}
+            } message: { Text("Your progress could not be saved online yet. You can try again without replaying the game.") }
+            .onDisappear { stopSailing() }
+            .onChange(of: scenePhase) { _,value in if value != .active { stopSailing() } }
         }
     }
-
-    // MARK: - Firebase
-
-    private func loadUserProfile() {
+    private func loadPosition() {
+        guard !loaded else { return }; loaded = true
+        let saved = UserDefaults.standard.double(forKey: storageKey+".position")
+        let latest = UserDefaults.standard.double(forKey: storageKey+".furthest")
+        progress = saved.isFinite ? CGFloat(saved).clamped(to: 0...1) : 0
+        furthest = max(progress,latest.isFinite ? CGFloat(latest).clamped(to: 0...1) : 0)
+    }
+    private func savePosition() {
+        furthest = max(furthest,progress)
+        UserDefaults.standard.set(Double(progress),forKey: storageKey+".position")
+        UserDefaults.standard.set(Double(furthest),forKey: storageKey+".furthest")
+    }
+    private func moveAnchor(width: CGFloat) { anchorY = NoahVoyageRoute(width: width).point(progress).y-25 }
+    private func selectStop(_ index: Int) {
+        let target = NoahVoyageRoute.progress(for: index)
+        if abs(progress-target) < 0.006 && !isSailing { discover() }
+        else { sail(to: index) }
+    }
+    private func discover() {
+        stopSailing()
+        if currentIndex == NoahVoyageChapter.build.rawValue { showBuildGame = true }
+        else if currentIndex == NoahVoyageChapter.animals.rawValue { showAnimalsGame = true }
+        else if currentIndex == NoahVoyageChapter.promise.rawValue { showRainbowGame = true }
+        else { selectedChapter = NoahVoyageChapter(rawValue: currentIndex) }
+    }
+    private func loadAnimalsCompletion() {
+        animalsFinished = UserDefaults.standard.bool(forKey: storageKey+".animalsComplete")
+        if animalsFinished && UserDefaults.standard.bool(forKey: storageKey+".animalsPending") { saveAnimalsCompletion() }
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        Database.database().reference()
-            .child("Users")
-            .child(uid)
-            .observeSingleEvent(of: .value) { snapshot in
-                guard let dict = snapshot.value as? [String: Any] else { return }
-                if let name = (dict["Name"] as? String)?.trimmed(), !name.isEmpty {
-                    self.userName = name
-                } else if let email = dict["email"] as? String {
-                    self.userName = email.components(separatedBy: "@").first ?? "Explorer"
-                }
-                if let hero = (dict["Hero"] as? String)?.trimmed(), !hero.isEmpty {
-                    self.heroKey = hero
-                }
-            }
-    }
-
-    // MARK: - Movement
-
-    private func walkToNode(_ index: Int) {
-        let n = max(1, nodes.count - 1)
-        let target = CGFloat(index).clamped(to: 0...CGFloat(n)) / CGFloat(n)
-        walk(to: target)
-    }
-
-    private func walk(to targetProgress: CGFloat) {
-        let start = progress.clamped(to: 0...1)
-        let target = targetProgress.clamped(to: 0...1)
-        guard target != start else { return }
-
-        isWalking = true
-        walkCancellable?.cancel()
-        lastAutoScrollY = -1000
-
-        let fullPathSeconds: Double = 16.0
-        let distance = abs(Double(target - start))
-        let duration = max(0.30, fullPathSeconds * distance)
-        let startDate = Date()
-
-        walkCancellable = Timer.publish(every: 1/60, on: .main, in: .common)
-            .autoconnect()
-            .sink { _ in
-                let t = Date().timeIntervalSince(startDate) / max(0.001, duration)
-                let clampedT = min(1.0, t)
-                let value = start + CGFloat(clampedT) * (target - start)
-
-                progress = value
-
-                if clampedT >= 1.0 {
-                    progress = target
-                    walkCancellable?.cancel()
-                    isWalking = false
-                }
-            }
-    }
-
-    private func toggleWalk() {
-        if isWalking {
-            isWalking = false
-            walkCancellable?.cancel()
-            return
+        Database.database().reference().child("Users").child(uid).child("Adventures").child("Noah").child("GatherAnimals").observeSingleEvent(of: .value) { snapshot in
+            if snapshot.value as? Bool == true { animalsFinished = true; UserDefaults.standard.set(true,forKey: storageKey+".animalsComplete") }
         }
-        let start = progress
-        let target = nextStopProgress(from: start)
-        guard target > start else { return }
-        walk(to: target)
     }
-
-    private func nextStopProgress(from p: CGFloat) -> CGFloat {
-        let n = max(1, nodes.count - 1)
-        let raw = p.clamped(to: 0...1) * CGFloat(n)
-        let nextIndex = min(n, Int(floor(raw)) + 1)
-        return CGFloat(nextIndex) / CGFloat(n)
+    private func saveAnimalsCompletion() {
+        guard !savingAnimals,let uid = Auth.auth().currentUser?.uid else { return }
+        savingAnimals = true
+        let key = storageKey
+        Database.database().reference().child("Users").child(uid).child("Adventures").child("Noah").child("GatherAnimals").setValue(true) { error,_ in
+            DispatchQueue.main.async {
+                savingAnimals = false
+                if error != nil { animalsSaveAlert = true }
+                else { UserDefaults.standard.set(false,forKey: key+".animalsPending") }
+            }
+        }
     }
-
+    private func loadBuildCompletion() {
+        // This workshop originally occupied God's Call; preserve an earned completion when moving it.
+        let legacy = UserDefaults.standard.bool(forKey: storageKey+".callComplete")
+        if legacy && !UserDefaults.standard.bool(forKey: storageKey+".buildComplete") {
+            UserDefaults.standard.set(true,forKey: storageKey+".buildComplete")
+            UserDefaults.standard.set(true,forKey: storageKey+".buildPending")
+        }
+        buildFinished = UserDefaults.standard.bool(forKey: storageKey+".buildComplete")
+        if buildFinished && UserDefaults.standard.bool(forKey: storageKey+".buildPending") { saveBuildCompletion() }
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        Database.database().reference().child("Users").child(uid).child("Adventures").child("Noah").child("BuildTheArk").observeSingleEvent(of: .value) { snapshot in
+            if snapshot.value as? Bool == true { buildFinished = true }
+            else if !buildFinished {
+                Database.database().reference().child("Users").child(uid).child("Adventures").child("Noah").child("GodsCall").observeSingleEvent(of: .value) { legacy in
+                    if legacy.value as? Bool == true {
+                        buildFinished = true
+                        UserDefaults.standard.set(true,forKey: storageKey+".buildComplete")
+                        UserDefaults.standard.set(true,forKey: storageKey+".buildPending")
+                        saveBuildCompletion()
+                    }
+                }
+            }
+        }
+    }
+    private func saveBuildCompletion() {
+        guard !savingBuild,let uid = Auth.auth().currentUser?.uid else { return }
+        savingBuild = true
+        let key = storageKey
+        Database.database().reference().child("Users").child(uid).child("Adventures").child("Noah").child("BuildTheArk").setValue(true) { error,_ in
+            DispatchQueue.main.async {
+                savingBuild = false
+                if error != nil { buildSaveAlert = true }
+                else { UserDefaults.standard.set(false,forKey: key+".buildPending") }
+            }
+        }
+    }
+    private func loadRainbowCompletion() {
+        rainbowFinished = UserDefaults.standard.bool(forKey: storageKey+".rainbowComplete")
+        if rainbowFinished && UserDefaults.standard.bool(forKey: storageKey+".rainbowPending") { saveRainbowCompletion() }
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        Database.database().reference().child("Users").child(uid).child("Adventures").child("Noah").child("RainbowPromise").observeSingleEvent(of: .value) { snapshot in
+            if snapshot.value as? Bool == true { rainbowFinished = true }
+        }
+    }
+    private func saveRainbowCompletion() {
+        guard !savingRainbow,let uid = Auth.auth().currentUser?.uid else { return }
+        savingRainbow = true
+        let key = storageKey
+        let updates: [String: Any] = ["Users/\(uid)/Adventures/Noah/RainbowPromise": true,"Users/\(uid)/HeroAlbumUnlocked/Noah": true]
+        Database.database().reference().updateChildValues(updates) { error,_ in
+            DispatchQueue.main.async {
+                savingRainbow = false
+                if error != nil { saveAlert = true }
+                else { UserDefaults.standard.set(false,forKey: key+".rainbowPending") }
+            }
+        }
+    }
+    private func toggleSailing() {
+        if isSailing { stopSailing(); return }
+        if progress >= 0.999 { discover(); return }
+        sail(to: min(6,Int(floor(progress*6+0.001))+1))
+    }
+    private func sail(to index: Int) {
+        stopSailing()
+        let start = progress,target = NoahVoyageRoute.progress(for: index)
+        guard abs(target-start) > 0.001 else { return }
+        destination = index; isReverse = target < start
+        if reduceMotion { progress = target; savePosition(); announceArrival(index); return }
+        isSailing = true; lastScrollY = -1000
+        let duration = max(0.4,abs(Double(target-start))*27)
+        let began = ProcessInfo.processInfo.systemUptime
+        voyageTimer = Timer.publish(every: 1.0/60,on: .main,in: .common).autoconnect().sink { _ in
+            let elapsed = ProcessInfo.processInfo.systemUptime-began
+            let t = min(1,max(0,elapsed/duration))
+            // Gentle acceleration at departure and deceleration when entering the harbor.
+            let smooth = t*t*(3-2*t)
+            progress = start+CGFloat(smooth)*(target-start)
+            if t >= 1 { progress = target; stopSailing(); announceArrival(index) }
+        }
+    }
+    private func announceArrival(_ index: Int) {
+        UISelectionFeedbackGenerator().selectionChanged()
+        UIAccessibility.post(notification: .announcement,argument: "Arrived at \(NoahVoyageChapter(rawValue: index)?.title ?? "the harbor")")
+    }
+    private func stopSailing() { voyageTimer?.cancel(); voyageTimer = nil; isSailing = false; if loaded { savePosition() } }
     private func jump(to value: CGFloat) {
-        walkCancellable?.cancel()
-        lastAutoScrollY = -1000
-        withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-            progress = value.clamped(to: 0...1)
-        }
-        isWalking = false
-    }
-
-    private func autoScrollIfNeeded(proxy: ScrollViewProxy, to positionY: CGFloat) {
-        let threshold: CGFloat = isWalking ? 0 : 18
-        let shouldScroll = abs(positionY - lastAutoScrollY) >= threshold
-        guard shouldScroll else { return }
-
-        lastAutoScrollY = positionY
-        var transaction = Transaction()
-        transaction.animation = isWalking ? nil : .easeOut(duration: 0.22)
-        withTransaction(transaction) {
-            proxy.scrollTo("anchor", anchor: .center)
-        }
+        stopSailing(); isReverse = false; lastScrollY = -1000; progress = value.clamped(to: 0...1); savePosition()
     }
 }
-
-// MARK: - Preview
-#Preview {
-    NoahAdventureView()
-}
+#Preview { NoahAdventureView() }

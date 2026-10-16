@@ -145,7 +145,9 @@ private struct DavidQuestMarker: View {
                             Circle().stroke(Color(hex: isCurrent ? "#F6CE6C" : "#FAEDCA"), lineWidth: 3)
                         }
 
-                    Text(node.emoji).font(.system(size: 31))
+                    if node.title == "Song of Courage" {
+                        Image("VictoryLyreFrame").resizable().scaledToFit().frame(width: 36,height: 46)
+                    } else { Text(node.emoji).font(.system(size: 31)) }
 
                     Text(isCompleted ? "✓" : String(number))
                         .font(.system(size: 11, weight: .heavy, design: .rounded))

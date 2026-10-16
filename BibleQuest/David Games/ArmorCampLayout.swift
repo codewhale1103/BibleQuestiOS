@@ -15,8 +15,8 @@ struct ArmorCampLayout {
         let h = heroHeight(intro: intro), center = heroCenter(intro: intro)
         switch piece {
         case .helmet: return CGPoint(x: center.x,y: center.y - h * 0.35)
-        case .breastplate: return CGPoint(x: center.x,y: center.y + h * 0.025)
-        case .sword: return CGPoint(x: center.x - h * 0.20,y: center.y + h * 0.06)
+        case .breastplate: return CGPoint(x: center.x,y: center.y - h * 0.025)
+        case .sword: return CGPoint(x: center.x - h * 0.15,y: center.y - h * 0.015)
         }
     }
     func wornSize(_ piece: ArmorCampRound.Piece,intro: Bool) -> CGSize {
@@ -24,7 +24,7 @@ struct ArmorCampLayout {
         switch piece {
         case .helmet: return CGSize(width: h * 0.43,height: h * 0.32)
         case .breastplate: return CGSize(width: h * 0.49,height: h * 0.36)
-        case .sword: return CGSize(width: h * 0.17,height: h * 0.49)
+        case .sword: return CGSize(width: h * 0.23,height: h * 0.49)
         }
     }
     var standSize: CGSize {
