@@ -1,0 +1,124 @@
+{
+  "provider": "ElevenLabs",
+  "voice": "Anna - Children's Book Narrator",
+  "model": "Eleven Multilingual v2",
+  "generated": "2026-10-17",
+  "settings": {
+    "speed": 1,
+    "stability": 0.5,
+    "similarity": 0.75,
+    "style": 0,
+    "speakerBoost": true
+  },
+  "licenseStatus": "Local preview only. Generated on Free plan. Regenerate under a paid commercial plan before commercial release.",
+  "clips": [
+    {
+      "id": "first",
+      "text": "Little wings, a great big world! Hold your finger on either side of the sky to guide our dove. Move up or down to glide. Let's look for a place to rest.",
+      "file": "dove-voice-first.m4a",
+      "durationSeconds": 11.061
+    },
+    {
+      "id": "water",
+      "text": "Look at the silver water. So much sky, and so much sea! Let's look a little farther.",
+      "file": "dove-voice-water.m4a",
+      "durationSeconds": 6.422
+    },
+    {
+      "id": "homeward",
+      "text": "The dove found no place to rest. That's all right. Noah is waiting. Let's follow the breeze back to the ark.",
+      "file": "dove-voice-homeward.m4a",
+      "durationSeconds": 6.6
+    },
+    {
+      "id": "land",
+      "text": "There's Noah's welcoming hand! Gently carry the dove down into his open palm.",
+      "file": "dove-voice-land.m4a",
+      "durationSeconds": 4.821
+    },
+    {
+      "id": "welcome",
+      "text": "Welcome home, little dove. Noah brought the bird safely back inside. Sometimes hope means waiting a little longer.",
+      "file": "dove-voice-welcome.m4a",
+      "durationSeconds": 7.392
+    },
+    {
+      "id": "wait",
+      "text": "Noah waited seven more days. Watch the sun and moon turn the days. Then we can open the window again.",
+      "file": "dove-voice-wait.m4a",
+      "durationSeconds": 6.889
+    },
+    {
+      "id": "second",
+      "text": "Seven days later, Noah sent the dove out again. Look for a little green sign that the waters are going down.",
+      "file": "dove-voice-second.m4a",
+      "durationSeconds": 6.552
+    },
+    {
+      "id": "landscape",
+      "text": "Look! More land is appearing. Follow the warm breeze toward the olive grove.",
+      "file": "dove-voice-landscape.m4a",
+      "durationSeconds": 4.837
+    },
+    {
+      "id": "grove",
+      "text": "A fresh olive leaf! Pick it up gently, and carry it to the dove's beak.",
+      "file": "dove-voice-grove.m4a",
+      "durationSeconds": 4.305
+    },
+    {
+      "id": "leaf",
+      "text": "A little leaf, a great big hope! Carry our green discovery home to Noah.",
+      "file": "dove-voice-leaf.m4a",
+      "durationSeconds": 4.631
+    },
+    {
+      "id": "delivered",
+      "text": "In the evening, the dove returned with a fresh olive leaf. Now Noah knew that the waters had gone down.",
+      "file": "dove-voice-delivered.m4a",
+      "durationSeconds": 6.603
+    },
+    {
+      "id": "third",
+      "text": "After seven more days, Noah sent the dove out again. Follow the greener coast. What a beautiful place to explore!",
+      "file": "dove-voice-third.m4a",
+      "durationSeconds": 7.175
+    },
+    {
+      "id": "branch",
+      "text": "A sunlit branch, and green leaves all around. Gently guide the dove onto this peaceful resting place.",
+      "file": "dove-voice-branch.m4a",
+      "durationSeconds": 6.943
+    },
+    {
+      "id": "finale",
+      "text": "This time, the dove did not return to the ark. New life was growing beyond the water. Noah kept waiting and trusting God. Little wings had brought a great big hope.",
+      "file": "dove-voice-finale.m4a",
+      "durationSeconds": 11.488
+    },
+    {
+      "id": "hint",
+      "text": "Hold your finger toward the side you want to fly. Let go to glide quietly. You can also tap Follow the breeze for a little help.",
+      "file": "dove-voice-hint.m4a",
+      "durationSeconds": 8.886
+    },
+    {
+      "id": "reflection",
+      "text": "Calm water can be like a mirror. Can you see the sky reflected in the sea?",
+      "file": "dove-voice-reflection.m4a",
+      "durationSeconds": 4.546
+    },
+    {
+      "id": "waterfall",
+      "text": "Water flows downhill. When it tumbles over rocks, it can make a beautiful waterfall.",
+      "file": "dove-voice-waterfall.m4a",
+      "durationSeconds": 5.268
+    },
+    {
+      "id": "olive",
+      "text": "Olive leaves are narrow and green. A fresh leaf showed Noah that the waters were going down.",
+      "file": "dove-voice-olive.m4a",
+      "durationSeconds": 5.537
+    }
+  ]
+}

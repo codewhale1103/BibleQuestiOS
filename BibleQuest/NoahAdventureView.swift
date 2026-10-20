@@ -30,6 +30,18 @@ struct NoahAdventureView: View {
     @State private var animalsFinished = false
     @State private var savingAnimals = false
     @State private var animalsSaveAlert = false
+    @State private var showFloodGame = false
+    @State private var floodFinished = false
+    @State private var savingFlood = false
+    @State private var floodSaveAlert = false
+    @State private var showWaitingGame = false
+    @State private var waitingFinished = false
+    @State private var savingWaiting = false
+    @State private var waitingSaveAlert = false
+    @State private var showDoveGame = false
+    @State private var doveFinished = false
+    @State private var savingDove = false
+    @State private var doveSaveAlert = false
     private var currentIndex: Int { NoahVoyageRoute(width: 390).index(at: progress) }
     private var storageKey: String { "NoahVoyageMap.\(Auth.auth().currentUser?.uid ?? "guest")" }
 
@@ -46,7 +58,7 @@ struct NoahAdventureView: View {
                     ScrollViewReader { proxy in
                         ScrollView(.vertical,showsIndicators: false) {
                             ZStack(alignment: .top) {
-                                NoahQuestMap(progress: progress,furthest: furthest,sailing: isSailing,reverse: isReverse,compact: wide,visible: visible,active: scenePhase == .active && selectedChapter == nil && !showRainbowGame && !showBuildGame && !showAnimalsGame,onSelect: selectStop)
+                                NoahQuestMap(progress: progress,furthest: furthest,sailing: isSailing,reverse: isReverse,compact: wide,visible: visible,active: scenePhase == .active && selectedChapter == nil && !showRainbowGame && !showBuildGame && !showAnimalsGame && !showFloodGame && !showWaitingGame && !showDoveGame,onSelect: selectStop)
                                 VStack(spacing: 0) {
                                     Spacer().frame(height: anchorY.clamped(to: 0...(NoahVoyageRoute.height-1)))
                                     Color.clear.frame(height: 1).id("ark-anchor")
@@ -80,13 +92,37 @@ struct NoahAdventureView: View {
                     NoahVoyageHeader(chapter: currentIndex,compact: wide,onBack: { stopSailing(); dismiss() }).frame(maxWidth: wide ? 310 : 530).frame(maxWidth: .infinity,alignment: wide ? .leading : .center).padding(.horizontal,16).padding(.top,8)
                 }
                 .overlay(alignment: .bottom) {
-                    NoahVoyageDock(chapter: NoahVoyageChapter(rawValue: isSailing ? destination : currentIndex) ?? .call,sailing: isSailing,atEnd: progress >= 0.999,compact: wide,rainbowFinished: rainbowFinished,buildFinished: buildFinished,animalsFinished: animalsFinished,
+                    NoahVoyageDock(chapter: NoahVoyageChapter(rawValue: isSailing ? destination : currentIndex) ?? .call,sailing: isSailing,atEnd: progress >= 0.999,compact: wide,rainbowFinished: rainbowFinished,buildFinished: buildFinished,animalsFinished: animalsFinished,floodFinished: floodFinished,waitingFinished: waitingFinished,doveFinished: doveFinished,
                         onStart: { jump(to: 0) },onSail: toggleSailing,onLatest: { jump(to: furthest) },onDiscover: discover)
                         .frame(maxWidth: wide ? 330 : 480).frame(maxWidth: .infinity,alignment: wide ? .trailing : .center).padding(.horizontal,16).padding(.bottom,8)
                 }
             }
             .toolbar(.hidden,for: .navigationBar,.tabBar).preferredColorScheme(.dark)
             .sheet(item: $selectedChapter) { chapter in NoahVoyageChapterSheet(chapter: chapter) }
+            .fullScreenCover(isPresented: $showDoveGame) {
+                DoveVoyageGame(onComplete: {
+                    doveFinished = true
+                    UserDefaults.standard.set(true,forKey: storageKey+".doveComplete")
+                    UserDefaults.standard.set(true,forKey: storageKey+".dovePending")
+                    saveDoveCompletion()
+                },onExit: { showDoveGame = false })
+            }
+            .fullScreenCover(isPresented: $showWaitingGame) {
+                RainOrchestraGame(onComplete: {
+                    waitingFinished = true
+                    UserDefaults.standard.set(true,forKey: storageKey+".waitingComplete")
+                    UserDefaults.standard.set(true,forKey: storageKey+".waitingPending")
+                    saveWaitingCompletion()
+                },onExit: { showWaitingGame = false })
+            }
+            .fullScreenCover(isPresented: $showFloodGame) {
+                ArkAfloatGame(onComplete: {
+                    floodFinished = true
+                    UserDefaults.standard.set(true,forKey: storageKey+".floodComplete")
+                    UserDefaults.standard.set(true,forKey: storageKey+".floodPending")
+                    saveFloodCompletion()
+                },onExit: { showFloodGame = false })
+            }
             .fullScreenCover(isPresented: $showAnimalsGame) {
                 ArkParadeGame(onComplete: {
                     animalsFinished = true
@@ -114,6 +150,21 @@ struct NoahAdventureView: View {
             .onAppear(perform: loadRainbowCompletion)
             .onAppear(perform: loadBuildCompletion)
             .onAppear(perform: loadAnimalsCompletion)
+            .onAppear(perform: loadFloodCompletion)
+            .onAppear(perform: loadWaitingCompletion)
+            .onAppear(perform: loadDoveCompletion)
+            .alert("Little wings. Great big hope.",isPresented: $doveSaveAlert) {
+                Button("Try saving again",action: saveDoveCompletion)
+                Button("Later",role: .cancel) {}
+            } message: { Text("The Dove Returns is complete on this device. Your online progress could not be saved yet. You can retry without replaying.") }
+            .alert("Your rain song is complete",isPresented: $waitingSaveAlert) {
+                Button("Try saving again",action: saveWaitingCompletion)
+                Button("Later",role: .cancel) {}
+            } message: { Text("40 Days & Nights is complete on this device. Your online progress could not be saved yet. You can retry without replaying.") }
+            .alert("Everyone is safe and cozy",isPresented: $floodSaveAlert) {
+                Button("Try saving again",action: saveFloodCompletion)
+                Button("Later",role: .cancel) {}
+            } message: { Text("Flood Begins is complete on this device. Your online progress could not be saved yet. You can retry without replaying.") }
             .alert("Every pair is safely aboard",isPresented: $animalsSaveAlert) {
                 Button("Try saving again",action: saveAnimalsCompletion)
                 Button("Later",role: .cancel) {}
@@ -151,9 +202,72 @@ struct NoahAdventureView: View {
     private func discover() {
         stopSailing()
         if currentIndex == NoahVoyageChapter.build.rawValue { showBuildGame = true }
+        else if currentIndex == NoahVoyageChapter.dove.rawValue { showDoveGame = true }
+        else if currentIndex == NoahVoyageChapter.waiting.rawValue { showWaitingGame = true }
+        else if currentIndex == NoahVoyageChapter.flood.rawValue { showFloodGame = true }
         else if currentIndex == NoahVoyageChapter.animals.rawValue { showAnimalsGame = true }
         else if currentIndex == NoahVoyageChapter.promise.rawValue { showRainbowGame = true }
         else { selectedChapter = NoahVoyageChapter(rawValue: currentIndex) }
+    }
+    private func loadDoveCompletion() {
+        doveFinished = UserDefaults.standard.bool(forKey: storageKey+".doveComplete")
+        if doveFinished && UserDefaults.standard.bool(forKey: storageKey+".dovePending") { saveDoveCompletion() }
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        Database.database().reference().child("Users").child(uid).child("Adventures").child("Noah").child("DoveReturns").observeSingleEvent(of: .value) { snapshot in
+            if snapshot.value as? Bool == true { doveFinished = true;UserDefaults.standard.set(true,forKey: storageKey+".doveComplete") }
+        }
+    }
+    private func saveDoveCompletion() {
+        guard !savingDove,let uid = Auth.auth().currentUser?.uid else { return }
+        savingDove = true
+        let key = storageKey
+        Database.database().reference().child("Users").child(uid).child("Adventures").child("Noah").child("DoveReturns").setValue(true) { error,_ in
+            DispatchQueue.main.async {
+                savingDove = false
+                if error != nil { doveSaveAlert = true }
+                else { UserDefaults.standard.set(false,forKey: key+".dovePending") }
+            }
+        }
+    }
+    private func loadWaitingCompletion() {
+        waitingFinished = UserDefaults.standard.bool(forKey: storageKey+".waitingComplete")
+        if waitingFinished && UserDefaults.standard.bool(forKey: storageKey+".waitingPending") { saveWaitingCompletion() }
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        Database.database().reference().child("Users").child(uid).child("Adventures").child("Noah").child("FortyDaysAndNights").observeSingleEvent(of: .value) { snapshot in
+            if snapshot.value as? Bool == true { waitingFinished = true;UserDefaults.standard.set(true,forKey: storageKey+".waitingComplete") }
+        }
+    }
+    private func saveWaitingCompletion() {
+        guard !savingWaiting,let uid = Auth.auth().currentUser?.uid else { return }
+        savingWaiting = true
+        let key = storageKey
+        Database.database().reference().child("Users").child(uid).child("Adventures").child("Noah").child("FortyDaysAndNights").setValue(true) { error,_ in
+            DispatchQueue.main.async {
+                savingWaiting = false
+                if error != nil { waitingSaveAlert = true }
+                else { UserDefaults.standard.set(false,forKey: key+".waitingPending") }
+            }
+        }
+    }
+    private func loadFloodCompletion() {
+        floodFinished = UserDefaults.standard.bool(forKey: storageKey+".floodComplete")
+        if floodFinished && UserDefaults.standard.bool(forKey: storageKey+".floodPending") { saveFloodCompletion() }
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        Database.database().reference().child("Users").child(uid).child("Adventures").child("Noah").child("FloodBegins").observeSingleEvent(of: .value) { snapshot in
+            if snapshot.value as? Bool == true { floodFinished = true; UserDefaults.standard.set(true,forKey: storageKey+".floodComplete") }
+        }
+    }
+    private func saveFloodCompletion() {
+        guard !savingFlood,let uid = Auth.auth().currentUser?.uid else { return }
+        savingFlood = true
+        let key = storageKey
+        Database.database().reference().child("Users").child(uid).child("Adventures").child("Noah").child("FloodBegins").setValue(true) { error,_ in
+            DispatchQueue.main.async {
+                savingFlood = false
+                if error != nil { floodSaveAlert = true }
+                else { UserDefaults.standard.set(false,forKey: key+".floodPending") }
+            }
+        }
     }
     private func loadAnimalsCompletion() {
         animalsFinished = UserDefaults.standard.bool(forKey: storageKey+".animalsComplete")

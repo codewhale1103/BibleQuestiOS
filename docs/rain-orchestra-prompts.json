@@ -1,0 +1,32 @@
+{
+  "mode": "built-in image_gen",
+  "assets": [
+    {
+      "prompt": "Use case: illustration-story\nAsset type: premium portrait background plate for a children's iOS water-routing music game on Noah's ark.\nPrimary request: a beautiful hand-crafted rain orchestra workshop on the sheltered OUTSIDE side-deck of Noah's ark, floating on a vast blue teal ocean during gentle rain, cinematic high-end animated feature quality, tactile carved wood and copper, magical but believable. No people.\nComposition: portrait 2:3. Camera looks almost straight toward a large EMPTY recessed dark warm cedar vertical workboard occupying central 80 percent width and middle 70 percent height; subtle long vertical wood grain, no distracting objects on this board. At the very top is curved timber canopy and a narrow copper rain gutter. Along extreme left and right edges rope and oak framing with tiny amber lanterns. Below workboard at very bottom is a slim wooden shelf and glimpse of turquoise ocean. In upper distant side openings show a huge curving ark hull and misty clouds. Board is deliberately empty so interactive instruments and channels can be rendered separately by the app. No drawn channels or pipes, no bowls, no text, no symbols, no UI, no characters, no animals.\nLighting: richly atmospheric overcast blue daylight outside contrasting honey lantern glow and warm polished timber; luminous soft bounce light, sophisticated detailed materials, rounded kid-friendly craftsmanship, exquisite AAA game art. Entire rectangular background filled, no transparency.",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-1eb094df-cb58-4ab0-82da-160be2dc45d1.png",
+      "saved": "BibleQuest/Assets.xcassets/RainOrchestraWorkshop.imageset/art.png",
+      "generator": "built-in image_gen"
+    },
+    {
+      "prompt": "Use case: stylized-concept\nAsset type: transparent isolated game prop for a premium children's Noah's ark rain orchestra.\nPrimary request: one exquisite small hammered bronze musical singing bowl, luminous polished honey brass outside, beautiful turquoise glazed inside with a little clear water. Mounted on a short carved walnut pedestal with a low oval base. Rounded friendly craftsmanship, believable sculpted form, richly detailed hammered metal, tiny engraved decorative bands, warm cinematic lantern reflections, rendered like a AAA animated feature prop.\nComposition: front view with camera slightly above to see the wide elliptical opening, full object entirely visible centered, roughly square composition, no other objects, no ground plane, no scenery. Bowl open top at upper 20% image, round bowl body ends about 65%, pedestal and base beneath. Strong clean silhouette for small game rendering.\nConstraints: genuinely transparent background, no text, no symbols, no UI, no watermark, no characters, no notes floating around, no cast shadow outside the object.",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-4df3a6b3-21d8-444e-9514-a05365cd4603.png",
+      "saved": "BibleQuest/Assets.xcassets/RainMusicBowl.imageset/art.png",
+      "generator": "built-in image_gen",
+      "transparent": true
+    },
+    {
+      "prompt": "Use case: stylized-concept\nAsset type: transparent isolated rotating game prop, Noah's ark rain orchestra.\nPrimary request: one beautifully crafted round wooden waterwheel viewed EXACTLY face-on, circular silhouette, with twelve sculpted dark cedar paddles around its perimeter, warm honey oak spokes, bronze hoops and brass rivets, central round bronze axle hub. Exquisite realistic wood grain and carved beveled edges, friendly premium animated feature quality. No supports, no water, no scenery, no stand or attached shaft. Warm lantern illumination from upper left with blue soft reflection from lower right. Radially balanced round wheel so app can rotate it around image center.\nComposition: square, wheel centered precisely and filling 90% of frame, full wheel entirely visible with padding on all sides.\nConstraints: genuinely transparent background, no text, no UI, no watermark, no background shadow, no perspective tilt.",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-7f735819-2518-4f94-b9f3-86a41342ae38.png",
+      "saved": "BibleQuest/Assets.xcassets/RainWaterwheel.imageset/art.png",
+      "generator": "built-in image_gen",
+      "transparent": true
+    },
+    {
+      "prompt": "Use case: stylized-concept\nAsset type: transparent isolated game prop for Noah's ark children's rain orchestra.\nPrimary request: a single small beautiful barrel hand drum, tactile warm polished carved cedar shell, cream stretched rawhide top with leather rim, elegant woven crisscrossed rope tension cords, narrow bronze ring accents. Premium animated feature game prop, exquisite material detail and beveled forms, cinematic warm honey lantern lighting with soft blue bounce. Front view with camera slightly above, so elliptical stretched drum top is clearly visible. Drum short squat and sturdy, friendly and inviting, no sticks.\nComposition: square centered full object, taking 85% width, entire drum visible, no ground plane, no setting, no other objects.\nConstraints: genuinely transparent background, no text, no symbols, no UI, no watermark, no cast shadow beyond object.",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-c3ba599e-27b5-413f-86ec-36d0cc152b5d.png",
+      "saved": "BibleQuest/Assets.xcassets/RainMusicDrum.imageset/art.png",
+      "generator": "built-in image_gen",
+      "transparent": true
+    }
+  ]
+}

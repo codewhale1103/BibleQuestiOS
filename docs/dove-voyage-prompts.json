@@ -1,0 +1,68 @@
+{
+  "generator": "OpenAI built-in image_gen",
+  "assets": [
+    {
+      "key": "DoveMorningSea",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-eeb54ee9-6fca-4266-a288-bf21e28e8b58.png",
+      "final": "BibleQuest/Assets.xcassets/DoveMorningSea.imageset/DoveMorningSea.png",
+      "transparent": false,
+      "prompt": "Use case: illustration-story\nAsset type: wide panoramic backdrop for a premium children's Noah's ark flying game.\nPrimary request: exquisite cinematic silver-blue morning over the receding flood, an immense peaceful ocean, distant misty blue mountains barely visible near the horizon, huge luminous clouds parting, silver shafts of sunlight, calm rolling turquoise water, warm hope after rain. Animated feature quality with sophisticated natural painted detail, breathtaking depth and soft atmospheric perspective.\nComposition: wide landscape 3:2; horizon at 42% from top. The central and lower 70% is open ocean with no foreground objects so an animated dove and interactive props can move over it. Mountains are distant and small. No bird, no ark, no people, no islands in foreground, no text, no UI, no rainbow. Fill the complete frame."
+    },
+    {
+      "key": "DoveSunsetSea",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-bf519157-6392-4fff-b14a-f77c9a0ef0a5.png",
+      "final": "BibleQuest/Assets.xcassets/DoveSunsetSea.imageset/DoveSunsetSea.png",
+      "transparent": false,
+      "prompt": "Use case: illustration-story\nAsset type: wide panoramic backdrop for a premium children's Noah's ark flying game, evening return with olive leaf.\nPrimary request: spectacular warm golden-hour ocean after the flood, glowing peach and lavender clouds, sunlit shafts through mist, molten gold reflections on turquoise water, distant mountain ridges emerging from the receding ocean. A deeply joyful hopeful scene, richly detailed premium animated feature storybook painting, believable natural water and light, luminous cinematic color.\nComposition: wide landscape 3:2, horizon at 42 percent from top. Broad open ocean in central and lower two thirds for interactive bird flight. No foreground trees or objects, no birds, no ark, no characters, no text, no UI, no rainbow. Fill the complete frame."
+    },
+    {
+      "key": "DoveLivingCoast",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-365facb0-ef82-42d9-84ea-1496781f766c.png",
+      "final": "BibleQuest/Assets.xcassets/DoveLivingCoast.imageset/DoveLivingCoast.png",
+      "transparent": false,
+      "prompt": "Use case: illustration-story\nAsset type: panoramic landscape backdrop, premium children's Noah's ark dove flying adventure.\nPrimary request: a breathtaking renewed green coastline emerging above turquoise floodwaters, ancient olive trees on softly rounded limestone islands, a delicate waterfall cascading down a distant cliff, fresh green leaves catching soft golden morning sunlight, high blue sky with enormous luminous clouds, peaceful birds-eye side-view of the receding ocean. Premium animated feature painted realism, rich tactile foliage, soft atmospheric perspective, extraordinarily beautiful and hopeful.\nComposition: wide landscape 3:2, horizon at 42% height; distant green islands mostly on right and left edges, central midground open for bird flight; no large foreground objects. No birds, no characters, no ark, no text or UI, no rainbow."
+    },
+    {
+      "key": "DoveFlightBody",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-6220664b-a4e8-4978-9c1b-14b432730cfc.png",
+      "final": "BibleQuest/Assets.xcassets/DoveFlightBody.imageset/DoveFlightBody.png",
+      "transparent": true,
+      "prompt": "Use case: stylized-concept\nAsset type: isolated transparent character body for a beautifully animated children's dove flying game.\nPrimary request: one extraordinarily beautiful anatomically believable white rock dove in horizontal forward flight, head pointing RIGHT, viewed in clean side profile with a subtle three-quarter view of breast. Its wings are FOLDED snugly against the back so no extended wing silhouettes protrude; separate animated wings will be layered in the game. Elegant smooth white pearlescent breast, detailed overlapping soft ivory feathers, neat long tapered tail fanning to the LEFT, petite warm gray beak, expressive small glossy dark eye with delicate pale ring, tiny pale pink feet neatly tucked beneath the belly. Friendly and gentle, natural bird proportions, no human facial expression, not a toy. Premium animated feature character render, soft warm sunlight above and cool reflected sea light below.\nComposition: landscape isolated full bird, body centered, entire beak and tail fully visible, 10% clear padding. Horizontal flight posture, not standing. No olive leaf, no branch, no environment, no text, no watermark. Genuinely transparent background, no floor or cast shadow."
+    },
+    {
+      "key": "DoveWelcomeWindow",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-612252c1-64e2-4f26-891c-2f3b5d12c058.png",
+      "final": "BibleQuest/Assets.xcassets/DoveWelcomeWindow.imageset/DoveWelcomeWindow.png",
+      "transparent": false,
+      "prompt": "Use case: illustration-story\nAsset type: portrait close-up background for a children's game where a dove lands in Noah's open hand.\nPrimary request: warm intimate view into a beautifully crafted ancient cedar ark window at sunset. Noah, a kindly elderly man in an ivory linen robe with dusty blue sash, stands INSIDE behind the open window; his upper face is above the top edge so the picture focuses on his large welcoming open right hand extending out toward the viewer. His natural open palm is centered at x50%, y65%, palm facing upward as a safe platform for a little dove. Believable clean human hand with five fingers relaxed together, gentle cupped palm, detailed warm skin. Softly blurred blue sash and ivory chest behind hand, golden timber window frame around outer edges, amber light and soft blue sea glints, handcrafted historical materials. High-end animated feature quality, beautiful proportions, painterly cinematic realism, emotional warmth and care.\nComposition: portrait 2:3, hand large and clearly readable at center lower half, open space ABOVE hand for animated dove to approach. No bird in image, no leaf, no text, no UI, no watermark."
+    },
+    {
+      "key": "DoveFlightWing",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-ea65bd79-8049-4eec-a594-cd6d305c5db4.png",
+      "final": "BibleQuest/Assets.xcassets/DoveFlightWing.imageset/DoveFlightWing.png",
+      "transparent": true,
+      "prompt": "Use case: stylized-concept\nAsset type: isolated transparent animated wing sprite, matching the reference white dove.\nInput images: Image 1 is a character reference for white feather color, softness, natural anatomy and lighting.\nPrimary request: ONE detached extended white dove wing, no bird body. Broad elegant natural fan of overlapping white primary and secondary feathers, raised flight position. Wing hinge is at the BOTTOM RIGHT of the image (near 85% width, 85% height), feather tips extend UPWARD and LEFTWARD into a rounded graceful fan, so the app can pivot the wing at its lower right corner. Clearly a feathered bird wing, anatomically natural, exquisite fine plumage, warm sunlight on upper edges and subtle sea-blue shade underneath.\nComposition: square, entire wing visible with 8% clear padding. No body, no second wing, no bird head, no scenery, no text. Genuinely transparent background with no cast shadow or glow outside feathers. Premium animated feature character detail."
+    },
+    {
+      "key": "DovePerched",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-0b851c17-70cf-427c-8b48-193144d6cd77.png",
+      "final": "BibleQuest/Assets.xcassets/DovePerched.imageset/DovePerched.png",
+      "transparent": true,
+      "prompt": "Use case: stylized-concept\nAsset type: isolated transparent perched dove character for a children's Noah's ark game.\nInput images: Image 1 is the character identity reference. Keep the same gentle small eye, pearlescent white feather detail, beak color and natural proportions.\nPrimary request: the same beautiful white dove now perched upright, facing RIGHT in side profile, wings folded snugly, tail sloping back LEFT, both delicate pale pink feet clearly visible with curled toes ready to grip a branch. No branch or ground under the feet. Gentle relaxed posture, small glossy dark eye, natural bird face without human expressions. Exquisite premium animated feature rendering, soft warm sunlight and sea-blue fill.\nComposition: centered full bird with all toes, beak and tail visible and clear padding. Genuinely transparent background. No olive leaf, no environment, no text, no cast shadow."
+    },
+    {
+      "key": "DoveOliveBranch",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-3ca11aef-d214-4f87-809a-438f9afe8fac.png",
+      "final": "BibleQuest/Assets.xcassets/DoveOliveBranch.imageset/DoveOliveBranch.png",
+      "transparent": true,
+      "prompt": "Use case: stylized-concept\nAsset type: transparent foreground olive branch for a premium children's Noah's ark dove game.\nPrimary request: one exquisitely detailed living olive tree branch stretching diagonally from the lower RIGHT edge toward the upper LEFT, with gnarled warm brown bark, forked twigs, soft narrow gray-green olive leaves and a few fresh bright green leaves at the tips. One sturdy, nearly horizontal resting twig extends leftward near the center, offering a clear place for a dove to perch. Realistic natural olive foliage in beautiful cinematic animated feature quality, golden-hour rim light and sea-blue shadows, tactile botanical detail.\nComposition: landscape 3:2, isolated full branching spray, no trunk, no ground, no bird, no sky. Airy open spaces between leaves, branch enters from lower right and fans leftward. Genuinely transparent background, no text or UI."
+    },
+    {
+      "key": "DoveOliveLeaf",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-096fd6a4-5c1e-497b-95f1-5c2dd0afe98d.png",
+      "final": "BibleQuest/Assets.xcassets/DoveOliveLeaf.imageset/DoveOliveLeaf.png",
+      "transparent": true,
+      "prompt": "Use case: stylized-concept\nAsset type: isolated transparent interactive olive leaf for children's Noah's ark game.\nPrimary request: one beautiful freshly plucked olive leaf with a short delicate stem. Narrow lance-shaped leaf, naturally olive green top with a luminous pale central vein, slightly curled tip, tiny dew drop, warm soft golden side lighting. Exquisite botanical detail, premium cinematic children's storybook realism, simple readable silhouette.\nComposition: leaf diagonally from stem at lower LEFT to tip at upper RIGHT, entire leaf and stem visible with 15% clear padding, square image. Genuinely transparent background. No other leaves, no branch, no hands, no bird, no text."
+    }
+  ]
+}

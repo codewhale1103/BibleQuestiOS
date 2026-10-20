@@ -1,0 +1,42 @@
+{
+  "generator": "Built-in image_gen tool",
+  "assets": [
+    {
+      "name": "FloodStorm",
+      "prompt": "Use case: stylized-concept. Asset type: portrait premium children's adventure game background, 1024x1536. Magnificent ancient flood beginning, cinematic storybook feature-animation quality environment. Elevated view across a vast rain-filled blue teal sea with sculpted rolling waves, beautiful silvery foam, misty ancient forested hills fading in the distance, layered luminous slate clouds and soft light shafts. Rich ocean depth, soft distant rain, detailed water reflecting subtle warm light. Center contains open water to composite a separate Noah's ark, no boat in this image. Bottom foreground waves, top cloudy sky. Dramatic and wondrous, reassuring rather than frightening. No people, no animals, no buildings, no text, no UI, no lightning bolt, no destruction.",
+      "path": "BibleQuest/Assets.xcassets/FloodStorm.imageset/art.png",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-35989111-5db4-44f5-a939-f40335efd5cb.png"
+    },
+    {
+      "name": "FloodCargoRoom",
+      "prompt": "Use case: stylized-concept. Asset type: premium game environment background, portrait 1024x1536. Inside Noah's ancient wooden ark, beautiful spacious cargo room, feature-animation quality 3D storybook render. Front-facing slight three-quarter perspective, polished honey-colored timber walls and rich curved ribs. A tall square open window centered at x50 percent y32 percent looks out onto a rainy blue teal sea; warm reflections contrast with cool rain. Empty wooden floor fills bottom 45 percent, broad sturdy timber sill at midheight, warm light from upper left. A coiled rope and two ceramic jars at far edges only, small wooden crates far left edge, little straw at corners. Main middle floor completely open for interactive game objects. Gorgeous tactile grain, bronze details, soft volumetric light, gentle cozy atmosphere. No people, no animals, no food, no hanging lantern, no text, no UI, no modern objects.",
+      "path": "BibleQuest/Assets.xcassets/FloodCargoRoom.imageset/art.png",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-3e89af59-ab9a-446f-b788-5b646b9aa395.png"
+    },
+    {
+      "name": "FloodAnimalRoom",
+      "prompt": "Use case: stylized-concept. Asset type: premium game environment background, portrait 1024x1536. A cozy animal cabin inside Noah's ancient wooden ark, feature-animation quality 3D storybook render. Front-facing slight three-quarter perspective, honey-colored timber wall planks and massive curved ribs, carved wooden railing framing the sides. Wide square open window centered at x50 percent y32 percent reveals rainy blue teal sea. Lower 45 percent open straw-covered wooden floor with a soft empty oval straw nest on lower right, little hay rack at far left. Empty cabin ready for separately composited animal characters. Gorgeous detailed wood, warm golden soft lantern-like light from off-screen, cool blue window light, inviting safe atmosphere. Central floor and middle walls uncluttered. No animals, no people, no lantern object, no blankets, no text, no UI, no modern objects.",
+      "path": "BibleQuest/Assets.xcassets/FloodAnimalRoom.imageset/art.png",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-58e9348a-9c21-4674-93e0-a97f749cdd7f.png"
+    },
+    {
+      "name": "FloodLanternRoom",
+      "prompt": "Use case: stylized-concept. Asset type: premium game environment background, portrait 1024x1536. A beautiful lantern loft inside Noah's ancient wooden ark, feature-animation quality 3D storybook render. Front-facing slight three-quarter perspective. Tall honey timber cabin with beautifully curved support ribs, carved wooden roof beams arching at top. Square open window centered at x50 percent y32 percent shows rainy blue teal water. One simple dark bronze hook hangs from roof beam at x50 percent y20 percent, no lantern. Empty wooden floor fills lower 45 percent, a little woven rug at far edges, rope details at margins. Gorgeous tactile wood grain and soft atmospheric lighting, warm gold at edges and blue window light, cozy safe ancient setting. Generous uncluttered central area for interactive props. No people, no animals, no hanging lamp, no text, no UI, no modern objects.",
+      "path": "BibleQuest/Assets.xcassets/FloodLanternRoom.imageset/art.png",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-7ae69f69-2e96-4172-8ba3-883c88777e66.png"
+    },
+    {
+      "name": "FloodCutaway",
+      "prompt": "Use case: stylized-concept. Asset type: transparent environment prop for a premium children's Noah game. A magnificent ancient Noah's ark in side-on cutaway dollhouse view, bow pointing right, full boat entirely visible. Rich curved honey timber hull, two decks with three spacious cozy visible compartments on main deck, wooden ribs and plank floors, warm glowing golden lighting inside. Open wall cutaway clearly shows empty cargo bay on left, cozy straw cabin in middle, loft with hanging lamps on right. Beautiful detailed storybook feature-animation 3D render, slightly elevated camera, broadside long side faces camera. Deep dimensional timber textures, rope lashings, bronze hinges, lovingly crafted, cinematic polished visual. Empty rooms ready for separately composited animals. Actual transparent background, no water, no scenery, no floor outside boat, no text, no UI, no labels, no people, no animals. Entire ship has generous transparent margin, landscape 1536x1024.",
+      "path": "BibleQuest/Assets.xcassets/FloodCutaway.imageset/art.png",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-227073ab-e044-4dfb-aca2-1f251d533b60.png"
+    },
+    {
+      "name": "FloodExterior",
+      "prompt": "Use case: precise-object-edit. Edit the referenced Noah's ark into its exterior view for the same game. Keep the identical ship silhouette, exact framing, position, camera angle, hull, roof, rope, warm timber materials, dimensions, and lighting. Change only the open cutaway front: enclose both decks with richly textured honey-colored wooden planking and small square warm glowing windows along each deck. The exterior must look like a complete watertight wooden ark. No ramp, no sails, no people, no animals, no water, no scenery, no text or UI. Keep actual transparent background, no colored background and no backdrop glow. Entire ark visible in the exact same place as reference.",
+      "path": "BibleQuest/Assets.xcassets/FloodExterior.imageset/art.png",
+      "source": "/Users/shtu/.codex/generated_images/01a13b22-d649-7451-bfb5-582fd71df518/exec-cf7c89e5-dee1-427a-bb7e-7c38f9ff5cee.png",
+      "reference": "FloodCutaway"
+    }
+  ]
+}

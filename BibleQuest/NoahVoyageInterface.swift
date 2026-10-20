@@ -31,6 +31,9 @@ struct NoahVoyageDock: View {
     var rainbowFinished = false
     var buildFinished = false
     var animalsFinished = false
+    var floodFinished = false
+    var waitingFinished = false
+    var doveFinished = false
     let onStart: () -> Void
     let onSail: () -> Void
     let onLatest: () -> Void
@@ -45,15 +48,15 @@ struct NoahVoyageDock: View {
             Button(action: onDiscover) {
                 HStack {
                     VStack(alignment: .leading,spacing: 4) {
-                        Text(sailing ? "Sailing toward" : chapter == .animals ? (animalsFinished ? "PLAY ARK PARADE AGAIN" : "PLAY · LISTEN, FIND & GUIDE") : chapter == .build ? (buildFinished ? "RETURN TO YOUR WORKSHOP" : "PLAY · HUNT, BUILD & PAINT") : chapter == .promise ? (rainbowFinished ? "PLAY THE PROMISE AGAIN" : "PLAY THE RAINBOW CHALLENGE") : "DISCOVER THIS CHAPTER").font(.system(size: 6,weight: .bold)).tracking(1.4).opacity(0.6)
+                        Text(sailing ? "Sailing toward" : chapter == .dove ? (doveFinished ? "FLY WINGS OF HOPE AGAIN" : "PLAY · FLY, DISCOVER & BRING HOPE") : chapter == .waiting ? (waitingFinished ? "PLAY THE RAIN ORCHESTRA AGAIN" : "PLAY · BUILD, FLOW & MAKE MUSIC") : chapter == .flood ? (floodFinished ? "PLAY ARK AFLOAT AGAIN" : "PLAY · EXPLORE, PREPARE & CARE") : chapter == .animals ? (animalsFinished ? "PLAY ARK PARADE AGAIN" : "PLAY · LISTEN, FIND & GUIDE") : chapter == .build ? (buildFinished ? "RETURN TO YOUR WORKSHOP" : "PLAY · HUNT, BUILD & PAINT") : chapter == .promise ? (rainbowFinished ? "PLAY THE PROMISE AGAIN" : "PLAY THE RAINBOW CHALLENGE") : "DISCOVER THIS CHAPTER").font(.system(size: 6,weight: .bold)).tracking(1.4).opacity(0.6)
                         Text(chapter.title).font(.system(size: compact ? 18 : 21,design: .serif))
                     }
                     Spacer()
-                    Image(systemName: sailing ? "water.waves" : chapter == .promise || chapter == .build || chapter == .animals ? "play.fill" : "arrow.up.right").font(.system(size: 20,weight: .light))
+                    Image(systemName: sailing ? "water.waves" : chapter == .dove || chapter == .promise || chapter == .build || chapter == .animals || chapter == .flood || chapter == .waiting ? "play.fill" : "arrow.up.right").font(.system(size: 20,weight: .light))
                 }.foregroundStyle(Color(hex: "#143D49")).padding(.horizontal,17).frame(minHeight: compact ? 56 : 65)
                     .background(LinearGradient(colors: [Color(hex: "#FFF3D0"),Color(hex: "#DBBD84")],startPoint: .topLeading,endPoint: .bottomTrailing),in: RoundedRectangle(cornerRadius: 16))
                     .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(.white.opacity(0.3)))
-            }.buttonStyle(.plain).disabled(sailing).accessibilityLabel(sailing ? "Sailing to \(chapter.title)" : chapter == .animals ? (animalsFinished ? "Replay Gather Animals" : "Play Gather Animals") : chapter == .build ? (buildFinished ? "Replay Build the Ark" : "Play Build the Ark") : chapter == .promise ? (rainbowFinished ? "Replay Rainbow Promise" : "Play Rainbow Promise") : "Discover \(chapter.title)")
+            }.buttonStyle(.plain).disabled(sailing).accessibilityLabel(sailing ? "Sailing to \(chapter.title)" : chapter == .dove ? (doveFinished ? "Replay The Dove Returns" : "Play The Dove Returns") : chapter == .waiting ? (waitingFinished ? "Replay 40 Days and Nights" : "Play 40 Days and Nights") : chapter == .flood ? (floodFinished ? "Replay Flood Begins" : "Play Flood Begins") : chapter == .animals ? (animalsFinished ? "Replay Gather Animals" : "Play Gather Animals") : chapter == .build ? (buildFinished ? "Replay Build the Ark" : "Play Build the Ark") : chapter == .promise ? (rainbowFinished ? "Replay Rainbow Promise" : "Play Rainbow Promise") : "Discover \(chapter.title)")
             HStack(spacing: 0) {
                 control("arrow.uturn.backward","Start",action: onStart)
                 Divider().overlay(Color(hex: "#92B5B5").opacity(0.25)).frame(height: 20)

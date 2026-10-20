@@ -1,0 +1,82 @@
+{
+  "provider": "ElevenLabs",
+  "voice": "Anna - Children's Book Narrator",
+  "model": "Eleven Multilingual v2",
+  "generated": "2026-10-16",
+  "settings": {
+    "speed": 1,
+    "stability": 0.5,
+    "similarity": 0.75,
+    "style": 0,
+    "speakerBoost": true
+  },
+  "licenseStatus": "Preview only. Generated on Free plan. Regenerate under a paid commercial plan before commercial release.",
+  "clips": [
+    {
+      "id": "welcome",
+      "text": "Welcome to the Rain Orchestra! Let's make music with water while Noah and his family wait in the ark.",
+      "file": "rain-voice-welcome.m4a",
+      "durationSeconds": 5.708
+    },
+    {
+      "id": "first",
+      "text": "Drag a wooden channel onto an empty ring. Tap a channel to turn it. Then pull the golden gate down, and let it rain!",
+      "file": "rain-voice-first.m4a",
+      "durationSeconds": 8.457
+    },
+    {
+      "id": "split",
+      "text": "Can one stream become two? Try a forked channel. Send water to both shining bowls.",
+      "file": "rain-voice-split.m4a",
+      "durationSeconds": 6.3
+    },
+    {
+      "id": "moon",
+      "text": "Listen to the moonlight melody. Low, high, middle. Send water to the bowls in that order. Tap the melody button to hear it again.",
+      "file": "rain-voice-moon.m4a",
+      "durationSeconds": 9.145
+    },
+    {
+      "id": "wheel",
+      "text": "Let's turn the waterwheel! Guide the stream through the wheel, then down to the drum. Watch our little animal parade!",
+      "file": "rain-voice-wheel.m4a",
+      "durationSeconds": 7.651
+    },
+    {
+      "id": "together",
+      "text": "Time for the whole orchestra! Use two forked channels to send water to all three instruments. Every little stream can be part of the song.",
+      "file": "rain-voice-together.m4a",
+      "durationSeconds": 8.991
+    },
+    {
+      "id": "help",
+      "text": "Follow the glowing rings. Choose a channel, then tap an empty ring to place it. You can drag channels too. Tap a channel to turn it.",
+      "file": "rain-voice-help.m4a",
+      "durationSeconds": 7.028
+    },
+    {
+      "id": "spill",
+      "text": "Splish, splash! Water flows down. If it misses a channel, try another direction. You can keep changing your water machine.",
+      "file": "rain-voice-spill.m4a",
+      "durationSeconds": 8.959
+    },
+    {
+      "id": "lovely",
+      "text": "What a lovely little song! Another day, another night. Noah and his family kept waiting and trusting God.",
+      "file": "rain-voice-lovely.m4a",
+      "durationSeconds": 7.153
+    },
+    {
+      "id": "finale",
+      "text": "Rain fell for forty days and forty nights. Noah and his family stayed in the ark longer, waiting and trusting God. Your beautiful rain song made our pretend workshop come alive!",
+      "file": "rain-voice-finale.m4a",
+      "durationSeconds": 12.329
+    },
+    {
+      "id": "free",
+      "text": "Now the rain orchestra is yours! Change the channels, play the bowls, and send a little wooden boat down the stream.",
+      "file": "rain-voice-free.m4a",
+      "durationSeconds": 7.64
+    }
+  ]
+}

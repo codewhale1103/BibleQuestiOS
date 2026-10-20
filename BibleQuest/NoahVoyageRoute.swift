@@ -7,13 +7,13 @@ enum NoahVoyageChapter: Int, CaseIterable, Identifiable {
     var title: String { ["God’s Call","Build the Ark","Gather Animals","Flood Begins","40 Days & Nights","The Dove Returns","Rainbow Promise"][rawValue] }
     var subtitle: String { ["A quiet beginning","Faith takes shape","Every kind, together","Safe through the storm","Hope on the horizon","A sign of new life","A world made new"][rawValue] }
     var symbol: String { ["sun.max.fill","hammer.fill","pawprint.fill","water.waves","cloud.rain.fill","bird.fill","rainbow"][rawValue] }
-    var passage: String { ["GENESIS 6:9–22","GENESIS 6:14–22","GENESIS 7:1–9","GENESIS 7:10–24","GENESIS 8:1–5","GENESIS 8:6–12","GENESIS 9:8–17"][rawValue] }
+    var passage: String { ["GENESIS 6:9–22","GENESIS 6:14–22","GENESIS 7:1–9","GENESIS 7:10–24","GENESIS 7:12 · 8:1–5","GENESIS 8:6–12","GENESIS 9:8–17"][rawValue] }
     var story: String {
         ["Noah listened when God called him to build an ark. His journey began with trust, long before the first drop of rain.",
          "Piece by piece, Noah and his family built a great wooden ark. Every beam was a step of faith toward a future they could not yet see.",
          "Animals of every kind came into the ark. A place of shelter was ready for Noah’s family and the creatures in their care.",
          "The rain came, and the waters rose. The ark lifted above the land, carrying its precious passengers safely into the great unknown.",
-         "Through long days of rain and waiting, God remembered Noah. At last, the waters began to fall and the ark came to rest in the mountains of Ararat.",
+         "Rain fell for forty days and forty nights. Noah and his family stayed in the ark much longer, waiting and trusting God. God remembered Noah, and the waters began to go down.",
          "Noah sent a dove over the water. When it returned with a fresh olive leaf, he knew that new life was growing beyond the ark.",
          "On dry ground again, Noah and his family stepped into a renewed world. God set a rainbow in the clouds as a sign of His covenant with every living creature."][rawValue]
     }

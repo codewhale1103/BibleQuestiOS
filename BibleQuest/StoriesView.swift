@@ -2,139 +2,480 @@ import SwiftUI
 import AVFoundation
 import UIKit
 
+private enum StoryShelf: String, CaseIterable {
+    case all = "All stories", brave = "Brave hearts", wonders = "Big wonders", jesus = "Jesus", saved = "Saved"
+    var symbol: String {
+        switch self {
+        case .all: "square.grid.2x2.fill"
+        case .brave: "heart.fill"
+        case .wonders: "sparkles"
+        case .jesus: "sun.max.fill"
+        case .saved: "bookmark.fill"
+        }
+    }
+    func includes(_ story: BibleStory) -> Bool {
+        switch self {
+        case .all, .saved: true
+        case .brave: [3,4,5,6].contains(story.id)
+        case .wonders: [1,2,4,7,9].contains(story.id)
+        case .jesus: [8,9,10].contains(story.id)
+        }
+    }
+}
+
+private enum LibraryStyle {
+    static let paper = Color(hex: "#FAF8F3")
+    static let ink = Color(hex: "#293E49")
+    static let muted = Color(hex: "#73818A")
+    static let violet = Color(hex: "#7862AD")
+}
+
 struct StoriesView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var typeSize
+    @AppStorage("BibleQuestSavedStoryIDs") private var savedStoryIDs = ""
     @State private var selectedStory: BibleStory?
     @State private var isPreparingStory = false
+    @State private var shelf: StoryShelf = .all
+    @State private var query = ""
+    @State private var surpriseCount = 0
+    @FocusState private var searchFocused: Bool
+    @Namespace private var shelfAnimation
+
+    private var savedIDs: Set<Int> {
+        Set(savedStoryIDs.split(separator: ",").compactMap { Int($0) })
+    }
+    private var visibleStories: [BibleStory] {
+        let text = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        return BibleStory.library.filter { story in
+            let matchesShelf = shelf == .saved ? savedIDs.contains(story.id) : shelf.includes(story)
+            let matchesSearch = text.isEmpty || "\(story.title) \(story.referenceRange) \(story.people)".localizedCaseInsensitiveContains(text)
+            return matchesShelf && matchesSearch
+        }
+    }
+    private var showSpotlight: Bool {
+        shelf == .all && query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+    private var columns: [GridItem] {
+        [GridItem(.adaptive(minimum: typeSize.isAccessibilitySize ? 280 : 155, maximum: 350), spacing: 17, alignment: .top)]
+    }
 
     var body: some View {
+        let animateCovers = !reduceMotion
         ZStack {
-            LinearGradient(
-                colors: [Color.bqBackgroundTop, Color.bqBackgroundBottom],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-
+            LibraryStyle.paper.ignoresSafeArea()
             ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Storybook Library")
-                            .font(.system(size: 34, weight: .heavy, design: .rounded))
-                            .foregroundStyle(Color.bqTitle)
-
-                        Text("Tap a book cover, then swipe to turn pages.")
-                            .font(.system(.subheadline, design: .rounded))
-                            .foregroundStyle(Color.bqSubtitle)
+                VStack(alignment: .leading, spacing: 23) {
+                    heading
+                    searchBar
+                    shelves
+                    if showSpotlight, let featured = BibleStory.library.first(where: { $0.isDavidStory }) {
+                        StorySpotlight(story: featured) { openStory(featured) }
+                            .transition(.opacity)
                     }
-                    .padding(.top, 16)
-
-                    ForEach(Array(BibleStory.library.enumerated()), id: \.element.id) { index, story in
-                        StoryBookCover(
-                            story: story,
-                            palette: StoryCoverPalette.all[index % StoryCoverPalette.all.count]
-                        ) {
-                            openStory(story)
+                    HStack(alignment: .firstTextBaseline) {
+                        Text(shelf == .saved ? "Your saved stories" : showSpotlight ? "The story collection" : shelf.rawValue)
+                            .font(.system(.title3, design: .rounded, weight: .heavy))
+                            .foregroundStyle(LibraryStyle.ink)
+                        Spacer(minLength: 6)
+                        Text("\(visibleStories.count) \(visibleStories.count == 1 ? "story" : "stories")")
+                            .font(.system(.caption, design: .rounded, weight: .semibold))
+                            .foregroundStyle(LibraryStyle.muted)
+                            .contentTransition(.numericText())
+                    }
+                    if visibleStories.isEmpty {
+                        emptyShelf
+                    } else {
+                        LazyVGrid(columns: columns, alignment: .center, spacing: 23) {
+                            ForEach(visibleStories) { story in
+                                StoryLibraryBook(story: story, isSaved: savedIDs.contains(story.id),
+                                                 onOpen: { openStory(story) }, onSave: { toggleSaved(story) })
+                                    .scrollTransition(.interactive, axis: .vertical) { [animateCovers] content, phase in
+                                        content
+                                            .opacity(!animateCovers || phase.isIdentity ? 1 : 0.7)
+                                            .scaleEffect(!animateCovers || phase.isIdentity ? 1 : 0.97)
+                                    }
+                            }
                         }
                     }
+                    Label("A little reading. A whole lot of wonder.", systemImage: "sparkles")
+                        .font(.system(.caption, design: .rounded, weight: .medium))
+                        .foregroundStyle(LibraryStyle.muted)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 28)
+                .frame(maxWidth: 760)
+                .padding(.horizontal, 22)
+                .padding(.top, 22)
+                .padding(.bottom, 24)
+                .frame(maxWidth: .infinity)
             }
-
+            .scrollIndicators(.hidden)
+            .scrollDismissesKeyboard(.interactively)
             if isPreparingStory {
-                Color.black
-                    .ignoresSafeArea()
-                    .transition(.opacity)
+                Color.black.ignoresSafeArea().transition(.opacity)
+                    .accessibilityLabel("Opening story")
             }
         }
-        .animation(.easeOut(duration: 0.16), value: isPreparingStory)
-        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .navigationBar)
+        .animation(reduceMotion ? nil : .easeOut(duration: 0.16), value: isPreparingStory)
         .navigationDestination(item: $selectedStory) { story in
             StoryReaderView(story: story)
+        }
+        .sensoryFeedback(.selection, trigger: shelf)
+    }
+
+    private var heading: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "book.closed.fill")
+                    .font(.system(size: 17, weight: .semibold))
+                    .rotationEffect(.degrees(-12))
+                Text("THE STORY NOOK")
+                    .font(.system(.caption, design: .rounded, weight: .heavy))
+                    .tracking(2)
+                Spacer(minLength: 0)
+                Image(systemName: "sparkle")
+                    .foregroundStyle(Color(hex: "#C19757"))
+                    .accessibilityHidden(true)
+            }
+            .foregroundStyle(LibraryStyle.violet)
+            Text("Every page,\na little wonder.")
+                .font(.system(.largeTitle, design: .rounded, weight: .heavy))
+                .tracking(-0.8)
+                .foregroundStyle(LibraryStyle.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            HStack(alignment: .center, spacing: 14) {
+                Text("Big adventures for curious hearts.")
+                    .font(.system(.subheadline, design: .rounded, weight: .medium))
+                    .foregroundStyle(LibraryStyle.muted)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
+                Button {
+                    surpriseCount += 1
+                    if let story = BibleStory.library.randomElement() { openStory(story) }
+                } label: {
+                    Image(systemName: "dice.fill")
+                        .font(.system(size: 21, weight: .medium))
+                        .symbolEffect(.bounce, value: reduceMotion ? 0 : surpriseCount)
+                        .foregroundStyle(LibraryStyle.violet)
+                        .frame(width: 46, height: 46)
+                        .background(Color(hex: "#EEE7F7"), in: RoundedRectangle(cornerRadius: 16))
+                }
+                .buttonStyle(StoryCoverPressStyle())
+                .accessibilityLabel("Surprise me with a story")
+            }
+        }
+    }
+
+    private var searchBar: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass").foregroundStyle(LibraryStyle.violet)
+            TextField("Find a story or a hero…", text: $query)
+                .font(.system(.subheadline, design: .rounded, weight: .medium))
+                .foregroundStyle(LibraryStyle.ink)
+                .autocorrectionDisabled()
+                .submitLabel(.search)
+                .focused($searchFocused)
+                .onSubmit { searchFocused = false }
+                .accessibilityLabel("Search stories")
+            if !query.isEmpty {
+                Button { query = "" } label: {
+                    Image(systemName: "xmark.circle.fill").foregroundStyle(LibraryStyle.muted)
+                        .frame(width: 32, height: 32)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Clear search")
+            }
+        }
+        .padding(.horizontal, 16).padding(.vertical, 12)
+        .frame(minHeight: 52)
+        .background(.white, in: RoundedRectangle(cornerRadius: 18))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color(hex: "#E7E3EC"), lineWidth: 1))
+    }
+
+    private var shelves: some View {
+        ScrollView(.horizontal) {
+            HStack(spacing: 8) {
+                ForEach(StoryShelf.allCases, id: \.self) { item in
+                    Button {
+                        searchFocused = false
+                        withAnimation(reduceMotion ? nil : .spring(response: 0.36, dampingFraction: 0.82)) { shelf = item }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: item.symbol)
+                            Text(item.rawValue)
+                        }
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .foregroundStyle(shelf == item ? .white : LibraryStyle.muted)
+                        .padding(.horizontal, 14).padding(.vertical, 12)
+                        .background {
+                            if shelf == item {
+                                Capsule().fill(LibraryStyle.ink)
+                                    .matchedGeometryEffect(id: "selectedShelf", in: shelfAnimation)
+                            } else { Capsule().fill(Color(hex: "#EEECE7")) }
+                        }
+                        .contentShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(shelf == item ? [.isSelected] : [])
+                }
+            }
+            .padding(.vertical, 2)
+        }
+        .scrollIndicators(.hidden)
+    }
+
+    private var emptyShelf: some View {
+        VStack(spacing: 13) {
+            Image(systemName: shelf == .saved && query.isEmpty ? "bookmark" : "text.book.closed")
+                .font(.system(size: 37, weight: .light))
+                .foregroundStyle(LibraryStyle.violet)
+                .padding(20)
+                .background(Color(hex: "#EEE7F7"), in: Circle())
+            Text(shelf == .saved && query.isEmpty ? "Save a little wonder" : "No stories on this shelf")
+                .font(.system(.title3, design: .rounded, weight: .heavy))
+                .foregroundStyle(LibraryStyle.ink)
+            Text(shelf == .saved && query.isEmpty ? "Tap a bookmark on a cover to keep a story here for later." : "Try another name, a Bible reference, or a different shelf.")
+                .font(.system(.subheadline, design: .rounded))
+                .foregroundStyle(LibraryStyle.muted)
+                .multilineTextAlignment(.center)
+            Button("Explore all stories") { query = ""; shelf = .all; searchFocused = false }
+                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                .foregroundStyle(LibraryStyle.violet)
+                .padding(.vertical, 9)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 22).padding(.vertical, 30)
+    }
+
+    private func toggleSaved(_ story: BibleStory) {
+        var saved = savedIDs
+        if saved.contains(story.id) { saved.remove(story.id) } else { saved.insert(story.id) }
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
+            savedStoryIDs = saved.sorted().map(String.init).joined(separator: ",")
         }
     }
 
     private func openStory(_ story: BibleStory) {
-        guard selectedStory == nil else { return }
-
+        guard selectedStory == nil, !isPreparingStory else { return }
+        searchFocused = false
         if UIDevice.current.userInterfaceIdiom == .phone {
             isPreparingStory = true
             StoryReaderOrientationCoordinator.prepareForPresentation()
-
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
                 selectedStory = story
                 isPreparingStory = false
             }
-        } else {
-            selectedStory = story
-        }
+        } else { selectedStory = story }
     }
 }
 
-private struct StoryBookCover: View {
+private struct StorySpotlight: View {
     let story: BibleStory
-    let palette: StoryCoverPalette
     var action: () -> Void
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         Button(action: action) {
-            ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(
-                        LinearGradient(
-                            colors: [palette.primary, palette.secondary],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            .stroke(.white.opacity(0.8), lineWidth: 1.5)
-                    )
-                    .shadow(color: .black.opacity(0.15), radius: 14, x: 0, y: 10)
-
-                HStack(spacing: 14) {
-                    Text(story.icon)
-                        .font(.system(size: 34))
-                        .frame(width: 54, height: 54)
-                        .background(.white.opacity(0.2))
-                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(story.title)
-                            .font(.system(size: 20, weight: .heavy, design: .rounded))
-                            .foregroundStyle(.white)
-                            .lineLimit(2)
-
-                        Text(story.referenceRange)
-                            .font(.system(.subheadline, design: .rounded))
-                            .foregroundStyle(.white.opacity(0.92))
-                            .lineLimit(2)
-
-                        Text("Tap to open")
-                            .font(.system(.caption, design: .rounded))
-                            .foregroundStyle(.white.opacity(0.85))
+            Group {
+                if typeSize.isAccessibilitySize {
+                    VStack(alignment: .leading, spacing: 0) {
+                        cover(height: 200)
+                        storyDetails.padding(20).background(Color(hex: "#334C63"))
                     }
-
-                    Spacer(minLength: 8)
-
-                    Image(systemName: "book.pages.fill")
-                        .font(.system(size: 22, weight: .semibold))
-                        .foregroundStyle(.white.opacity(0.95))
+                } else {
+                    ZStack {
+                        cover(height: 245)
+                        LinearGradient(stops: [.init(color: .black.opacity(0.18), location: 0),
+                                               .init(color: .clear, location: 0.35),
+                                               .init(color: Color(hex: "#182D3D").opacity(0.94), location: 1)],
+                                       startPoint: .top, endPoint: .bottom)
+                        VStack(alignment: .leading) {
+                            spotlightBadge
+                            Spacer(minLength: 55)
+                            storyDetails
+                        }
+                        .padding(18)
+                    }
+                    .frame(height: 245)
                 }
-                .padding(.horizontal, 20)
             }
-            .frame(maxWidth: .infinity, minHeight: 138)
+            .clipShape(RoundedRectangle(cornerRadius: 27))
+            .overlay(RoundedRectangle(cornerRadius: 27).stroke(.white.opacity(0.65), lineWidth: 1))
+            .shadow(color: Color(hex: "#334C63").opacity(0.15), radius: 15, y: 8)
         }
         .buttonStyle(StoryCoverPressStyle())
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Story spotlight: \(story.title). Eight illustrated pages with narration. Read story.")
+        .accessibilityAddTraits(.isButton)
+    }
+
+    private func cover(height: CGFloat) -> some View {
+        GeometryReader { geometry in
+            Image(story.coverAsset)
+                .resizable().scaledToFill()
+                .frame(width: geometry.size.width, height: height, alignment: .top)
+                .clipped()
+        }
+        .frame(height: height)
+    }
+
+    private var spotlightBadge: some View {
+        HStack {
+            Label("STORY SPOTLIGHT", systemImage: "sparkles")
+                .font(.system(.caption2, design: .rounded, weight: .heavy))
+                .tracking(1.3)
+                .foregroundStyle(.white)
+                .padding(.horizontal, 11).padding(.vertical, 8)
+                .background(.black.opacity(0.26), in: Capsule())
+            Spacer(minLength: 0)
+            Image(systemName: "sparkle")
+                .font(.system(size: 21, weight: .light))
+                .foregroundStyle(Color(hex: "#FFE8A5"))
+                .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)
+        }
+    }
+
+    private var storyDetails: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            Text(story.title)
+                .font(.system(.title2, design: .rounded, weight: .heavy))
+                .foregroundStyle(.white)
+                .fixedSize(horizontal: false, vertical: true)
+            HStack(spacing: 10) {
+                Label("8 pages · Read & listen", systemImage: "headphones")
+                    .font(.system(.caption, design: .rounded, weight: .medium))
+                    .foregroundStyle(Color(hex: "#E6E8ED"))
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
+                Image(systemName: "arrow.right")
+                    .font(.system(size: 16, weight: .heavy))
+                    .foregroundStyle(Color(hex: "#273E4E"))
+                    .frame(width: 41, height: 36)
+                    .background(Color(hex: "#FFDC89"), in: Capsule())
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+private struct StoryLibraryBook: View {
+    let story: BibleStory
+    let isSaved: Bool
+    var onOpen: () -> Void
+    var onSave: () -> Void
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            Button(action: onOpen) {
+                VStack(alignment: .leading, spacing: 0) {
+                    GeometryReader { geometry in
+                        Image(story.coverAsset)
+                            .resizable().scaledToFill()
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .clipped()
+                            .overlay(alignment: .leading) {
+                                LinearGradient(colors: [.black.opacity(0.22), .white.opacity(0.15), .clear], startPoint: .leading, endPoint: .trailing)
+                                    .frame(width: 12)
+                            }
+                            .overlay(alignment: .bottom) {
+                                Rectangle().fill(Color(hex: "#F7EDDE")).frame(height: 4)
+                                    .overlay(Rectangle().fill(Color(hex: "#D9CDBB")).frame(height: 0.7))
+                            }
+                    }
+                    .aspectRatio(1.05, contentMode: .fit)
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text(story.shelfLabel.uppercased())
+                            .font(.system(.caption2, design: .rounded, weight: .heavy))
+                            .tracking(1)
+                            .foregroundStyle(story.shelfTint)
+                        Text(story.title)
+                            .font(.system(.subheadline, design: .rounded, weight: .heavy))
+                            .foregroundStyle(LibraryStyle.ink)
+                            .lineLimit(3, reservesSpace: true)
+                            .frame(maxWidth: .infinity, alignment: .topLeading)
+                        Text(story.referenceRange)
+                            .font(.system(.caption2, design: .rounded, weight: .medium))
+                            .foregroundStyle(LibraryStyle.muted)
+                            .lineLimit(2, reservesSpace: true)
+                        HStack(spacing: 5) {
+                            Image(systemName: story.isDavidStory ? "headphones" : "book")
+                            Text(story.isDavidStory ? "Read & listen" : "\(story.scenes.count + 5) pages")
+                            Spacer(minLength: 0)
+                            Image(systemName: "arrow.up.right")
+                        }
+                        .font(.system(.caption2, design: .rounded, weight: .semibold))
+                        .foregroundStyle(story.shelfTint)
+                        .padding(.top, 2)
+                    }
+                    .padding(13)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.white)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 21))
+                .overlay(RoundedRectangle(cornerRadius: 21).stroke(Color(hex: "#E8E2D8"), lineWidth: 1))
+                .shadow(color: LibraryStyle.ink.opacity(0.07), radius: 8, y: 5)
+            }
+            .buttonStyle(StoryCoverPressStyle())
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("\(story.title). \(story.referenceRange). \(story.isDavidStory ? "Eight illustrated pages with narration" : "Read story")")
+            .accessibilityAddTraits(.isButton)
+
+            Button(action: onSave) {
+                Image(systemName: isSaved ? "bookmark.fill" : "bookmark")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(isSaved ? Color(hex: "#775421") : LibraryStyle.ink)
+                    .contentTransition(reduceMotion ? .identity : .symbolEffect(.replace))
+                    .frame(width: 36, height: 36)
+                    .background(isSaved ? Color(hex: "#FFDF98") : Color.white.opacity(0.94), in: Circle())
+                    .frame(width: 46, height: 46)
+                    .contentShape(Circle())
+            }
+            .buttonStyle(StoryCoverPressStyle())
+            .padding(5)
+            .accessibilityLabel("\(isSaved ? "Remove saved story" : "Save story"): \(story.title)")
+            .accessibilityAddTraits(isSaved ? [.isSelected] : [])
+        }
     }
 }
 
 private struct StoryCoverPressStyle: ButtonStyle {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
-            .animation(.spring(response: 0.35, dampingFraction: 0.7), value: configuration.isPressed)
+            .scaleEffect(configuration.isPressed && !reduceMotion ? 0.975 : 1)
+            .rotation3DEffect(.degrees(configuration.isPressed && !reduceMotion ? -3 : 0), axis: (x: 0, y: 1, z: 0))
+            .opacity(configuration.isPressed ? 0.92 : 1)
+            .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.72), value: configuration.isPressed)
+    }
+}
+
+private extension BibleStory {
+    var coverAsset: String {
+        let names = ["Creation", "Noah", "BabyMoses", "RedSea", "David", "Daniel", "Jonah", "Nativity", "Storm", "Samaritan"]
+        guard names.indices.contains(id - 1) else { return "StoryCoverCreation" }
+        return "StoryCover" + names[id - 1]
+    }
+    var shelfLabel: String {
+        switch id {
+        case 1: "Beginnings"
+        case 2,4,7,9: "Big wonders"
+        case 3,5,6: "Brave hearts"
+        case 8: "Good news"
+        default: "Kindness"
+        }
+    }
+    var shelfTint: Color {
+        switch id {
+        case 1,3,10: Color(hex: "#33796E")
+        case 2,4,7,9: Color(hex: "#3B718F")
+        case 5,6: Color(hex: "#9B6B38")
+        default: Color(hex: "#8060A2")
+        }
     }
 }
 

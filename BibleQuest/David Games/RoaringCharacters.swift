@@ -27,7 +27,7 @@ enum BeastArt {
                                              _ scale: SCNVector3, _ position: SCNVector3,
                                              _ material: SCNMaterial) -> SCNNode {
         let sphere = SCNSphere(radius: radius)
-        sphere.segmentCount = 28
+        sphere.segmentCount = 40
         sphere.materials = [material]
         let node = SCNNode(geometry: sphere)
         node.scale = scale; node.position = position
@@ -139,6 +139,7 @@ final class RoaringDavidRig {
     private let body = SCNNode()
     private let head = SCNNode()
     private var arms: [SCNNode] = []
+    private var elbows: [SCNNode] = []
     private var legs: [SCNNode] = []
     private var knees: [SCNNode] = []
     private let cloak = SCNNode()
@@ -147,9 +148,9 @@ final class RoaringDavidRig {
     init() {
         let skin = BeastArt.material("#EFB58F", roughness: 0.82)
         let warmSkin = BeastArt.material("#CA7B57", roughness: 0.72)
-        let linen = BeastArt.texturedMaterial("#FFF0C6", image: "RoaringLinen", scale: 3)
+        let linen = BeastArt.texturedMaterial("#E6CCA0", image: "RoaringLinen", scale: 3)
         let seam = BeastArt.material("#C6AD7A")
-        let burgundy = BeastArt.texturedMaterial("#8E4B62", image: "RoaringLinen", scale: 3, roughness: 0.94)
+        let burgundy = BeastArt.texturedMaterial("#794052", image: "RoaringLinen", scale: 3, roughness: 0.94)
         let cloakLight = BeastArt.material("#9D5865")
         let leather = BeastArt.material("#70402B", roughness: 0.67)
         let leatherEdge = BeastArt.material("#AF7747", roughness: 0.62)
@@ -159,7 +160,7 @@ final class RoaringDavidRig {
 
         BeastArt.garment(body, rings: [(1.34, 0.13, 0.12), (1.29, 0.245, 0.17), (1.16, 0.26, 0.18),
                                        (1.01, 0.225, 0.175), (0.94, 0.24, 0.18), (0.8, 0.30, 0.205),
-                                       (0.65, 0.335, 0.235)], folds: 0.009, material: linen)
+                                       (0.65, 0.335, 0.235)], folds: 0.015, material: linen)
         // Split collar, stitched hem, and the reference's diagonal wine-colored wrap.
         BeastArt.sweep(body, [SIMD3(-0.09, 1.325, -0.085), SIMD3(-0.11, 1.29, -0.15), SIMD3(-0.025, 1.24, -0.19), SIMD3(0, 1.16, -0.19)], radius: 0.009, material: seam)
         BeastArt.sweep(body, [SIMD3(0.09, 1.325, -0.085), SIMD3(0.11, 1.29, -0.15), SIMD3(0.025, 1.24, -0.19), SIMD3(0, 1.16, -0.19)], radius: 0.009, material: seam)
@@ -191,14 +192,17 @@ final class RoaringDavidRig {
             tassels.append(tassel)
         }
         BeastArt.ellipsoid(body, 0.105, SCNVector3(0.85, 1.1, 0.88), SCNVector3(0, 1.38, 0), skin)
-        head.position = SCNVector3(0, 1.655, -0.006); body.addChildNode(head)
+        // Match the reference's youthful, large-eyed proportions with a fully sculpted head.
+        head.position = SCNVector3(0, 1.62, -0.006)
+        head.scale = SCNVector3(0.94, 0.97, 0.96)
+        body.addChildNode(head)
         RoaringPortraits.davidFace(on: head, skin: skin)
         RoaringPortraits.davidHair(on: head)
 
         for side: Float in [-1, 1] {
             let arm = SCNNode(); arm.position = SCNVector3(side * 0.268, 1.255, 0); body.addChildNode(arm)
             arm.eulerAngles.z = side * 0.13
-            BeastArt.garment(arm, rings: [(0.045, 0.092, 0.105), (-0.06, 0.105, 0.105), (-0.17, 0.115, 0.11)], folds: 0.004, material: linen)
+            BeastArt.garment(arm, rings: [(0.055, 0.052, 0.065), (0.025, 0.083, 0.096), (-0.035, 0.101, 0.105), (-0.12, 0.105, 0.108), (-0.17, 0.108, 0.11)], folds: 0.004, material: linen)
             BeastArt.limb(arm, length: 0.23, radius: 0.073, at: SCNVector3(0, -0.085, 0), material: skin)
             let elbow = BeastArt.limb(arm, length: 0.245, radius: 0.06, at: SCNVector3(0, -0.265, 0), material: skin)
             elbow.eulerAngles.x = -0.72
@@ -213,8 +217,8 @@ final class RoaringDavidRig {
             for finger in 0..<3 {
                 BeastArt.sweep(elbow, [SIMD3(-0.035 + Float(finger) * 0.025, -0.285, -0.052), SIMD3(-0.035 + Float(finger) * 0.025, -0.3, -0.062), SIMD3(-0.035 + Float(finger) * 0.025, -0.315, -0.04), SIMD3(-0.035 + Float(finger) * 0.025, -0.32, -0.02)], radius: 0.004, material: warmSkin, steps: 8)
             }
-            if side > 0 { makeSling(parent: elbow, leather: leather, cord: rope) }
-            arms.append(arm)
+            if side < 0 { makeSling(parent: elbow, leather: leather, cord: rope) }
+            arms.append(arm); elbows.append(elbow)
 
             let leg = BeastArt.limb(body, length: 0.32, radius: 0.087, at: SCNVector3(side * 0.145, 0.72, 0), material: skin)
             let knee = BeastArt.limb(leg, length: 0.32, radius: 0.068, at: SCNVector3(0, -0.295, 0), material: skin)
@@ -240,9 +244,9 @@ final class RoaringDavidRig {
             let t = Float(row) / Float(rows)
             for column in 0...columns {
                 let u = Float(column) / Float(columns) - 0.5
-                let x = -0.225 + t * 0.435 + u * 0.205
+                let x = -0.225 + t * 0.435 + u * 0.235
                 let y = 1.31 - t * 0.34 + u * 0.2
-                let z = -0.15 - sin(t * .pi) * 0.072 - cos(u * .pi * 6) * 0.009
+                let z = -0.15 - sin(t * .pi) * 0.072 - cos(u * .pi * 6) * 0.016
                 vertices.append(SIMD3(x,y,z))
             }
         }
@@ -253,7 +257,7 @@ final class RoaringDavidRig {
         let mat = material.copy() as! SCNMaterial; mat.isDoubleSided = true
         BeastArt.mesh(body, vertices: vertices, indices: indices, material: mat)
         for side: Float in [-1, 1] {
-            BeastArt.sweep(body, [SIMD3(-0.225 + side * 0.102, 1.31 + side * 0.1, -0.158), SIMD3(-0.08 + side * 0.102, 1.2 + side * 0.1, -0.225), SIMD3(0.06 + side * 0.102, 1.09 + side * 0.1, -0.225), SIMD3(0.21 + side * 0.102, 0.97 + side * 0.1, -0.158)], radius: 0.006, material: edge)
+            BeastArt.sweep(body, [SIMD3(-0.225 + side * 0.117, 1.31 + side * 0.1, -0.158), SIMD3(-0.08 + side * 0.117, 1.2 + side * 0.1, -0.225), SIMD3(0.06 + side * 0.117, 1.09 + side * 0.1, -0.225), SIMD3(0.21 + side * 0.117, 0.97 + side * 0.1, -0.158)], radius: 0.006, material: edge)
         }
     }
 
@@ -319,6 +323,7 @@ final class RoaringDavidRig {
         for index in 0..<2 {
             let side: Double = index == 0 ? -1 : 1
             arms[index].eulerAngles = SCNVector3(-0.12,0,side * (calm ? 0.8 : 1.13) + lean * 0.15)
+            elbows[index].eulerAngles = SCNVector3(-0.72,0,0)
             legs[index].eulerAngles.x = Float(stride * side * 0.32)
             knees[index].eulerAngles.x = Float(max(0,-stride * side) * 0.4)
             tassels[index].eulerAngles.z = Float(reduced ? 0 : wind * 0.18 + sin(time * 5 + side) * 0.05)
@@ -337,7 +342,10 @@ final class RoaringDavidRig {
             let sign: Double = index == 0 ? 1 : -1
             legs[index].eulerAngles.x = Float(jump > 0.1 ? 0.48 * sign : stride * 0.77 * sign)
             knees[index].eulerAngles.x = Float(jump > 0.1 ? 0.65 : max(0, -stride * sign) * 1.05)
-            arms[index].eulerAngles.x = Float(jump > 0.1 ? -1.1 : -stride * 0.78 * sign)
+            arms[index].eulerAngles.x = Float(jump > 0.1 ? -1.1 : running ? -stride * 0.78 * sign : -0.18)
+            arms[index].eulerAngles.z = Float((index == 0 ? -1.0 : 1.0) * (running ? 0.13 : 0.40))
+            elbows[index].eulerAngles.x = running ? -0.72 : 1.20
+            elbows[index].eulerAngles.z = running ? 0 : (index == 0 ? 0.30 : -0.48)
             tassels[index].eulerAngles.x = Float(sin(time * 12 + sign) * (running ? 0.35 : 0.04))
         }
         cloak.eulerAngles.x = Float((running ? -0.63 : -0.06) + sin(time * (running ? 13 : 3)) * (running ? 0.12 : 0.035))
@@ -357,7 +365,6 @@ final class RoaringLionRig {
         let shoulder = BeastArt.texturedMaterial("#E2B570", image: "RoaringFur", scale: 2, roughness: 0.8)
         let mane = BeastArt.texturedMaterial("#71462E", image: "RoaringFur", scale: 1, roughness: 0.86)
         let maneMid = BeastArt.texturedMaterial("#7D4F32", image: "RoaringFur", scale: 1, roughness: 0.83)
-        let maneLight = BeastArt.texturedMaterial("#8A5937", image: "RoaringFur", scale: 1, roughness: 0.8)
         let dark = BeastArt.material("#35251E", roughness: 0.48)
         root.addChildNode(body)
         // Long rib cage, tucked abdomen, distinct shoulder blades and rear haunches.
@@ -367,24 +374,7 @@ final class RoaringLionRig {
             BeastArt.ellipsoid(body, 0.29, SCNVector3(0.68,1.22,1.12), SCNVector3(side * 0.26,0.88,0.71), gold)
         }
         head.position = SCNVector3(0,1.24,-0.83); body.addChildNode(head)
-        // A close, layered mane swept backward along the neck, with sharp overlapping tips.
-        BeastArt.ellipsoid(head, 0.46, SCNVector3(0.94,1.16,0.98), SCNVector3(0,-0.055,0.07), mane)
-        for layer in 0..<3 {
-            let count = layer == 0 ? 18 : 22
-            for index in 0..<count {
-                let a = Float(index) / Float(count) * .pi * 2 + Float(layer) * 0.17
-                let rx: Float = layer == 0 ? 0.31 : (layer == 1 ? 0.375 : 0.34)
-                let ry: Float = layer == 0 ? 0.35 : (layer == 1 ? 0.415 : 0.39)
-                let z = Float(layer) * 0.155 - 0.17
-                let root = SIMD3<Float>(sin(a) * rx, cos(a) * ry - 0.025, z)
-                let spread: Float = 1.13
-                let tip = SIMD3<Float>(sin(a) * rx * spread, cos(a) * ry * spread - 0.17, z + 0.29)
-                let control1 = root + SIMD3<Float>(sin(a) * 0.065, cos(a) * 0.05, 0.065)
-                let control2 = tip + SIMD3<Float>(sin(a) * 0.025, cos(a) * 0.025, -0.11)
-                let mat = (index + layer) % 5 == 0 ? maneLight : (index.isMultiple(of: 2) ? mane : maneMid)
-                BeastArt.sweep(head, [root,control1,control2,tip], radius: layer == 0 ? 0.071 : 0.084, depth: 0.44, pointed: true, material: mat, sides: 8, steps: 14)
-            }
-        }
+        RoaringMane.build(on: head)
         RoaringPortraits.lionFace(on: head, fur: gold, mane: mane)
         for front in [true,false] {
             for side: Float in [-1,1] {

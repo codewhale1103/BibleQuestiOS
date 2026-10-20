@@ -1,0 +1,111 @@
+{
+  "provider": "ElevenLabs",
+  "voice": "Anna - Children's Book Narrator",
+  "model": "Eleven Multilingual v2",
+  "generated": "2026-10-16",
+  "settings": {
+    "speed": 1,
+    "stability": 0.5,
+    "similarity": 0.75,
+    "speakerBoost": true
+  },
+  "licenseStatus": "Preview only. Generated on the Free plan; regenerate on a commercially licensed paid plan before commercial release.",
+  "clips": [
+    {
+      "id": "rain",
+      "text": "Here comes the rain! Touch the water and watch the little ripples. Let's come inside the ark.",
+      "file": "flood-voice-rain.m4a",
+      "durationSeconds": 6.435
+    },
+    {
+      "id": "welcome",
+      "text": "Welcome aboard! Let's make the ark cozy. You can explore the supplies, animal cabin, and lantern loft.",
+      "file": "flood-voice-welcome.m4a",
+      "durationSeconds": 6.673
+    },
+    {
+      "id": "basket",
+      "text": "Every basket needs a safe place. Pick up the basket and carry it to the glowing cradle.",
+      "file": "flood-voice-basket.m4a",
+      "durationSeconds": 5.174
+    },
+    {
+      "id": "rope",
+      "text": "Hold the round rope handle. Pull it down until the knot is nice and snug.",
+      "file": "flood-voice-rope.m4a",
+      "durationSeconds": 4.441
+    },
+    {
+      "id": "shutters",
+      "text": "Slide both wooden shutters toward the middle. Listen to the soft clunk when they close.",
+      "file": "flood-voice-shutters.m4a",
+      "durationSeconds": 5.241
+    },
+    {
+      "id": "lantern",
+      "text": "Let's bring some light inside. Carry the lantern up to the glowing hook. Beautiful!",
+      "file": "flood-voice-lantern.m4a",
+      "durationSeconds": 5.456
+    },
+    {
+      "id": "ready",
+      "text": "The supplies are secure, and the lantern is glowing. We're ready to watch the ark float!",
+      "file": "flood-voice-ready.m4a",
+      "durationSeconds": 4.308
+    },
+    {
+      "id": "launch",
+      "text": "The rain came, and the waters rose. Look! The water is lifting the ark. God kept Noah and everyone inside safe.",
+      "file": "flood-voice-launch.m4a",
+      "durationSeconds": 7.352
+    },
+    {
+      "id": "afloat",
+      "text": "We're afloat! The ark gently rocks on the waves. Let's check on our little friends and keep everyone cozy.",
+      "file": "flood-voice-afloat.m4a",
+      "durationSeconds": 6.979
+    },
+    {
+      "id": "apples",
+      "text": "Three little apples are rolling around! Catch them one at a time and put them back in the basket.",
+      "file": "flood-voice-apples.m4a",
+      "durationSeconds": 4.953
+    },
+    {
+      "id": "blanket",
+      "text": "Our little lamb would like something soft. Carry the blanket over to its woolly back.",
+      "file": "flood-voice-blanket.m4a",
+      "durationSeconds": 4.276
+    },
+    {
+      "id": "soothe",
+      "text": "Use your finger to gently stroke the lamb's wool. Slowly, softly. You're helping our friend settle down.",
+      "file": "flood-voice-soothe.m4a",
+      "durationSeconds": 7.269
+    },
+    {
+      "id": "cozy",
+      "text": "Lovely work! This room is cozy. Explore another room to see who needs a little help.",
+      "file": "flood-voice-cozy.m4a",
+      "durationSeconds": 5.784
+    },
+    {
+      "id": "finale",
+      "text": "Everyone is cozy and cared for. Noah trusted God, and you helped care for the ark. What a wonderful beginning to the voyage!",
+      "file": "flood-voice-finale.m4a",
+      "durationSeconds": 7.487
+    },
+    {
+      "id": "lesson",
+      "text": "Ropes hold our supplies in place when the ark moves. Small acts of care can make a big difference.",
+      "file": "flood-voice-lesson.m4a",
+      "durationSeconds": 5.829
+    },
+    {
+      "id": "explore",
+      "text": "You can move the wooden viewing handle to peek outside. Watch the waves, then come back into the warm ark.",
+      "file": "flood-voice-explore.m4a",
+      "durationSeconds": 6.464
+    }
+  ]
+}

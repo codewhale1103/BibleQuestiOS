@@ -70,7 +70,7 @@ final class RoaringCanyonScene {
         camera.wantsHDR = true
         camera.wantsExposureAdaptation = false
         camera.exposureOffset = 0.1
-        camera.bloomIntensity = 0.18; camera.bloomThreshold = 1.1; camera.bloomBlurRadius = 5
+        camera.bloomIntensity = 0.07; camera.bloomThreshold = 1.1; camera.bloomBlurRadius = 5
         camera.vignettingIntensity = 0.32; camera.vignettingPower = 1.5
         camera.screenSpaceAmbientOcclusionIntensity = 0.45
         camera.screenSpaceAmbientOcclusionRadius = 1.3
@@ -82,11 +82,11 @@ final class RoaringCanyonScene {
     }
     private func configureLighting() {
         let ambient = SCNNode(); ambient.light = SCNLight()
-        ambient.light?.type = .ambient; ambient.light?.intensity = 680
+        ambient.light?.type = .ambient; ambient.light?.intensity = 340
         ambient.light?.color = UIColor(Color(hex: "#D8E0DE"))
         scene.rootNode.addChildNode(ambient)
         sun.light = SCNLight(); sun.light?.type = .directional
-        sun.light?.intensity = 1350
+        sun.light?.intensity = 1200
         sun.light?.color = UIColor(Color(hex: "#FFF1D8"))
         sun.eulerAngles = SCNVector3(-0.75, -0.65, -0.15)
         sun.light?.castsShadow = true; sun.light?.shadowMode = .deferred
@@ -97,7 +97,7 @@ final class RoaringCanyonScene {
         sun.light?.zNear = 0.1; sun.light?.zFar = 90
         scene.rootNode.addChildNode(sun)
         let rim = SCNNode(); rim.light = SCNLight(); rim.light?.type = .omni
-        rim.light?.intensity = 180; rim.light?.color = UIColor(Color(hex: "#D7E6EA"))
+        rim.light?.intensity = 260; rim.light?.color = UIColor(Color(hex: "#D7E6EA"))
         rim.position = SCNVector3(0, 4, 6); scene.rootNode.addChildNode(rim)
     }
 
